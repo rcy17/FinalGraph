@@ -5,7 +5,7 @@
 #include <vecmath.h>
 #include <cmath>
 
-// TODO: Implement functions and add more fields as necessary
+// DONE: Implement functions and add more fields as necessary
 
 class Sphere : public Object3D
 {
@@ -29,8 +29,8 @@ public:
 
     bool intersect(const Ray &r, Hit &h, float t_min) override
     {
-        auto origin = r.getOrigin();
-        auto direction = r.getDirection();
+        const auto &origin = r.getOrigin();
+        const auto &direction = r.getDirection();
         auto l = center - origin;
         auto l_square = l.squaredLength();
         auto relation = getRelation(l_square);

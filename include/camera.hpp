@@ -6,10 +6,11 @@
 #include <float.h>
 #include <cmath>
 
-
-class Camera {
+class Camera
+{
 public:
-    Camera(const Vector3f &center, const Vector3f &direction, const Vector3f &up, int imgW, int imgH) {
+    Camera(const Vector3f &center, const Vector3f &direction, const Vector3f &up, int imgW, int imgH)
+    {
         this->center = center;
         this->direction = direction.normalized();
         this->horizontal = Vector3f::cross(this->direction, up);
@@ -38,16 +39,19 @@ protected:
 
 // TODO: Implement Perspective camera
 // You can add new functions or variables whenever needed.
-class PerspectiveCamera : public Camera {
+class PerspectiveCamera : public Camera
+{
 
 public:
     PerspectiveCamera(const Vector3f &center, const Vector3f &direction,
-            const Vector3f &up, int imgW, int imgH, float angle) : Camera(center, direction, up, imgW, imgH) {
+                      const Vector3f &up, int imgW, int imgH, float angle) : Camera(center, direction, up, imgW, imgH)
+    {
         // angle is in radian.
     }
 
-    Ray generateRay(const Vector2f &point) override {
-        // 
+    Ray generateRay(const Vector2f &point) override
+    {
+        //
     }
 };
 
