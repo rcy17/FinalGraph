@@ -47,12 +47,19 @@ public:
                       const Vector3f &up, int imgW, int imgH, float angle) : Camera(center, direction, up, imgW, imgH)
     {
         // angle is in radian.
+        f_x = width / (2 * tan(angle / 2));
+        f_y = height / (2 * tan(angle / 2));
     }
 
     Ray generateRay(const Vector2f &point) override
     {
-        //
+        Vector3f ray((point.x() - width / 2) / f_x, (point.y() - height / 2) / f_y, 1);
+        Matrix3f transform(horizontal, -up, direction);
+        return Ray(center, transform * ray);
     }
+
+private:
+    float f_x, f_y;
 };
 
 #endif //CAMERA_H
