@@ -13,13 +13,15 @@ public:
     Ray(const Vector3f &orig, const Vector3f &dir)
     {
         origin = orig;
-        direction = dir;
+        length = dir.length();
+        direction = dir / length;
     }
 
     Ray(const Ray &r)
     {
         origin = r.origin;
         direction = r.direction;
+        length = r.length;
     }
 
     const Vector3f &getOrigin() const
@@ -32,6 +34,11 @@ public:
         return direction;
     }
 
+    double getLength() const
+    {
+        return length;
+    }
+
     Vector3f pointAtParameter(double t) const
     {
         return origin + direction * t;
@@ -40,6 +47,7 @@ public:
 private:
     Vector3f origin;
     Vector3f direction;
+    double length;
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Ray &r)

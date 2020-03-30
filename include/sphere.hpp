@@ -30,7 +30,7 @@ public:
     bool intersect(const Ray &r, Hit &h, double t_min) override
     {
         const auto &origin = r.getOrigin();
-        const auto &direction = r.getDirection().normalized();
+        const auto &direction = r.getDirection();
         auto l = center - origin;
         auto l_square = l.squaredLength();
         auto relation = getRelation(l_square);
@@ -46,7 +46,7 @@ public:
         // t2 is t' in PPT
         auto t2 = sqrt(radius_square - d_square);
         auto t = t_p + t2 * (relation == INSIDE ? 1 : -1);
-        t /= r.getDirection().length();
+        t /= r.getLength();
         if (t < t_min || t > h.getT())
             return false;
         auto p = r.pointAtParameter(t);

@@ -32,6 +32,7 @@ public:
 		const auto &d = ray.getDirection();
 		auto tem = Matrix3f(d, e1, e2).determinant();
 		auto t = Matrix3f(s, e1, e2).determinant() / tem;
+		t /= ray.getLength();
 		if (t < t_min || t > hit.getT() || t <= 0)
 			return false;
 		auto beta = Matrix3f(d, s, e2).determinant() / tem;
