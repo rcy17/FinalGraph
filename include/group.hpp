@@ -22,6 +22,8 @@ public:
 
     ~Group() override
     {
+        for (auto object_p : objects)
+            delete object_p;
     }
 
     bool intersect(const Ray &r, Hit &h, double t_min) override
