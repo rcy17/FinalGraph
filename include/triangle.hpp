@@ -24,7 +24,7 @@ public:
 	{
 	}
 
-	bool intersect(const Ray &ray, Hit &hit, float t_min) override
+	bool intersect(const Ray &ray, Hit &hit, double t_min) override
 	{
 		auto e1 = vertices[0] - vertices[1];
 		auto e2 = vertices[0] - vertices[2];

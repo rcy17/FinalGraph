@@ -6,7 +6,7 @@
 #include <utility>
 #include <sstream>
 
-bool Mesh::intersect(const Ray &r, Hit &h, float t_min)
+bool Mesh::intersect(const Ray &r, Hit &h, double t_min)
 {
     // Optional: Change this brute force method into a faster one.
     bool result = false;

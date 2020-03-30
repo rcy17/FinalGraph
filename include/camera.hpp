@@ -3,7 +3,6 @@
 
 #include "ray.hpp"
 #include <vecmath.h>
-#include <float.h>
 #include <cmath>
 
 class Camera
@@ -44,7 +43,7 @@ class PerspectiveCamera : public Camera
 
 public:
     PerspectiveCamera(const Vector3f &center, const Vector3f &direction,
-                      const Vector3f &up, int imgW, int imgH, float angle) : Camera(center, direction, up, imgW, imgH)
+                      const Vector3f &up, int imgW, int imgH, double angle) : Camera(center, direction, up, imgW, imgH)
     {
         // angle is in radian.
         f_x = width / (2 * tan(angle / 2));
@@ -59,7 +58,7 @@ public:
     }
 
 private:
-    float f_x, f_y;
+    double f_x, f_y;
 };
 
 #endif //CAMERA_H

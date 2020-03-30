@@ -12,7 +12,7 @@
 class Material
 {
 public:
-    explicit Material(const Vector3f &d_color, const Vector3f &s_color = Vector3f::ZERO, float s = 0) : diffuseColor(d_color), specularColor(s_color), shininess(s)
+    explicit Material(const Vector3f &d_color, const Vector3f &s_color = Vector3f::ZERO, double s = 0) : diffuseColor(d_color), specularColor(s_color), shininess(s)
     {
     }
 
@@ -44,7 +44,7 @@ protected:
 
     Vector3f diffuseColor;
     Vector3f specularColor;
-    float shininess;
+    double shininess;
 };
 
 #endif // MATERIAL_H

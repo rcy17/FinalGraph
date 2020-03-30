@@ -24,7 +24,7 @@ public:
     {
     }
 
-    bool intersect(const Ray &r, Hit &h, float t_min) override
+    bool intersect(const Ray &r, Hit &h, double t_min) override
     {
         bool intersected = false;
         for (auto object_p : objects)

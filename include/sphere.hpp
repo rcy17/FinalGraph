@@ -16,7 +16,7 @@ public:
     }
 
     Sphere(const Vector3f &center,
-           float radius,
+           double radius,
            Material *material) : Object3D(material),
                                  center(center),
                                  radius(radius),
@@ -27,7 +27,7 @@ public:
 
     ~Sphere() override = default;
 
-    bool intersect(const Ray &r, Hit &h, float t_min) override
+    bool intersect(const Ray &r, Hit &h, double t_min) override
     {
         const auto &origin = r.getOrigin();
         const auto &direction = r.getDirection().normalized();
@@ -63,7 +63,7 @@ protected:
         OUTSIDE,
     };
 
-    Relation getRelation(float square_length)
+    Relation getRelation(double square_length)
     {
         if (square_length > radius)
         {
@@ -80,8 +80,8 @@ protected:
     }
 
     Vector3f center;
-    float radius;
-    float radius_square;
+    double radius;
+    double radius_square;
 };
 
 #endif
