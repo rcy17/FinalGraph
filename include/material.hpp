@@ -8,7 +8,7 @@
 #include "hit.hpp"
 #include <iostream>
 
-// TODO: Implement Shade function that computes Phong introduced in class.
+// DONE: Implement Shade function that computes Phong introduced in class.
 class Material
 {
 public:

@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     string inputFile = argv[1];
     string outputFile = argv[2]; // only bmp is allowed.
 
-    // TODO: Main RayCasting Logic
+    // DONE: Main RayCasting Logic
     // First, parse the scene using SceneParser.
     // Then loop over each pixel in the image, shooting a ray
     // through that pixel and finding its intersection with
@@ -40,7 +40,10 @@ int main(int argc, char *argv[])
     const auto camera = parser.getCamera();
     const auto group = parser.getGroup();
     Image image(camera->getWidth(), camera->getHeight());
+#pragma omp parallel for schedule(dynamic, 1)
     for (int x = 0; x < camera->getWidth(); x++)
+    {
+        fprintf(stderr, "\rprocessing %5d/%-5d", x, camera->getWidth());
         for (int y = 0; y < camera->getHeight(); y++)
         {
             Ray camRay = camera->generateRay(Vector2f(x, y));
@@ -63,7 +66,8 @@ int main(int argc, char *argv[])
                 image.SetPixel(x, y, parser.getBackgroundColor());
             }
         }
+    }
+    fprintf(stderr, "\rprocessing %5d/%-5d\n", camera->getWidth(), camera->getWidth());
     image.SaveImage(outputFile.c_str());
-    cout << "Hello! Computer Graphics!" << endl;
     return 0;
 }
