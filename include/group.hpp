@@ -29,14 +29,17 @@ public:
         bool intersected = false;
         for (auto object_p : objects)
         {
-            intersected = object_p->intersect(r, h, t_min);
+            intersected |= object_p->intersect(r, h, t_min);
         }
         return intersected;
     }
 
     void addObject(int index, Object3D *obj)
     {
-        objects.insert(objects.begin() + index, obj);
+        if (index < objects.size())
+            objects[index] = obj;
+        else
+            objects.insert(objects.begin() + index, obj);
     }
 
     int getGroupSize()

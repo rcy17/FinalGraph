@@ -20,7 +20,7 @@ public:
 			 const Vector3f &c,
 			 Material *m) : Object3D(m),
 							vertices{a, b, c},
-							normal(Vector3f::cross(a - b, a - c))
+							normal(Vector3f::cross(a - b, a - c).normalized())
 	{
 	}
 

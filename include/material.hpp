@@ -39,7 +39,7 @@ protected:
     template <typename T>
     T ReLU(T x)
     {
-        return x ? x > 0 : 0;
+        return x > 0 ? x : 0;
     }
 
     Vector3f diffuseColor;

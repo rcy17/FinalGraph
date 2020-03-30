@@ -30,24 +30,28 @@ public:
     bool intersect(const Ray &r, Hit &h, float t_min) override
     {
         const auto &origin = r.getOrigin();
-        const auto &direction = r.getDirection();
+        const auto &direction = r.getDirection().normalized();
         auto l = center - origin;
         auto l_square = l.squaredLength();
         auto relation = getRelation(l_square);
+        if (relation == JUSTON)
+            return false;
         auto t_p = Vector3f::dot(l, direction);
 
         if (t_p < 0 && relation == OUTSIDE)
             return false;
         auto d_square = l_square - t_p * t_p;
-        if (d_square > radius)
+        if (d_square >= radius_square)
             return false;
         // t2 is t' in PPT
         auto t2 = sqrt(radius_square - d_square);
         auto t = t_p + t2 * (relation == INSIDE ? 1 : -1);
+        t /= r.getDirection().length();
         if (t < t_min || t > h.getT())
             return false;
         auto p = r.pointAtParameter(t);
-        h.set(t, material, relation == OUTSIDE ? p - center : center - p);
+        const auto normal = (p - center).normalized();
+        h.set(t, material, relation == OUTSIDE ? normal : -normal);
         return true;
     }
 

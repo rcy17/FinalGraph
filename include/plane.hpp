@@ -25,7 +25,7 @@ public:
     bool intersect(const Ray &r, Hit &h, float t_min) override
     {
         auto t = -(Vector3f::dot(normal, r.getOrigin()) - d) /
-                 (Vector3f::dot(normal, r.getDirection));
+                 (Vector3f::dot(normal, r.getDirection()));
         if (t > h.getT() || t < t_min || t < 0)
             return false;
         h.set(t, material, Vector3f::dot(r.getDirection(), normal) < 0 ? normal : -normal);
