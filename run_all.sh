@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # If project not ready, generate cmake file.
-if [[ ! -d build ]]; then
+if [ ! -d build ]; then
     mkdir -p build
     cd build
     cmake ..
