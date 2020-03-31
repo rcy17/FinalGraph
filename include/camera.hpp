@@ -54,7 +54,7 @@ public:
     {
         Vector3f ray((point.x() - width / 2) / f_x, (point.y() - height / 2) / f_y, 1);
         Matrix3f transform(horizontal, up, direction);
-        return Ray(center, transform * ray.normalized());
+        return Ray(center, (transform * ray).normalized());
     }
 
 private:
