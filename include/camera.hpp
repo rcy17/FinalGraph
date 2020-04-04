@@ -12,7 +12,7 @@ public:
     {
         this->center = center;
         this->direction = direction.normalized();
-        this->horizontal = Vector3f::cross(this->direction, up);
+        this->horizontal = Vector3f::cross(this->direction, up).normalized();
         this->up = Vector3f::cross(this->horizontal, this->direction);
         this->width = imgW;
         this->height = imgH;
