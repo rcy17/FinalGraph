@@ -15,7 +15,7 @@ public:
 	Quat4f();
 
 	// q = w + x * i + y * j + z * k
-	Quat4f(double w, double x, double y, double z);
+	Quat4f(float w, float x, float y, float z);
 
 	Quat4f(const Quat4f &rq);			 // copy constructor
 	Quat4f &operator=(const Quat4f &rq); // assignment operator
@@ -28,18 +28,18 @@ public:
 	Quat4f(const Vector4f &v);
 
 	// returns the ith element
-	const double &operator[](int i) const;
-	double &operator[](int i);
+	const float &operator[](int i) const;
+	float &operator[](int i);
 
-	double w() const;
-	double x() const;
-	double y() const;
-	double z() const;
+	float w() const;
+	float x() const;
+	float y() const;
+	float z() const;
 	Vector3f xyz() const;
 	Vector4f wxyz() const;
 
-	double abs() const;
-	double absSquared() const;
+	float abs() const;
+	float absSquared() const;
 	void normalize();
 	Quat4f normalized() const;
 
@@ -54,28 +54,28 @@ public:
 	Quat4f exp() const;
 
 	// returns unit vector for rotation and radians about the unit vector
-	Vector3f getAxisAngle(double *radiansOut);
+	Vector3f getAxisAngle(float *radiansOut);
 
 	// sets this quaternion to be a rotation of fRadians about v = < fx, fy, fz >, v need not necessarily be unit length
-	void setAxisAngle(double radians, const Vector3f &axis);
+	void setAxisAngle(float radians, const Vector3f &axis);
 
 	// ---- Utility ----
 	void print();
 
 	// quaternion dot product (a la vector)
-	static double dot(const Quat4f &q0, const Quat4f &q1);
+	static float dot(const Quat4f &q0, const Quat4f &q1);
 
 	// linear (stupid) interpolation
-	static Quat4f lerp(const Quat4f &q0, const Quat4f &q1, double alpha);
+	static Quat4f lerp(const Quat4f &q0, const Quat4f &q1, float alpha);
 
 	// spherical linear interpolation
-	static Quat4f slerp(const Quat4f &a, const Quat4f &b, double t, bool allowFlip = true);
+	static Quat4f slerp(const Quat4f &a, const Quat4f &b, float t, bool allowFlip = true);
 
 	// spherical quadratic interoplation between a and b at point t
 	// given quaternion tangents tanA and tanB (can be computed using squadTangent)
-	static Quat4f squad(const Quat4f &a, const Quat4f &tanA, const Quat4f &tanB, const Quat4f &b, double t);
+	static Quat4f squad(const Quat4f &a, const Quat4f &tanA, const Quat4f &tanB, const Quat4f &b, float t);
 
-	static Quat4f cubicInterpolate(const Quat4f &q0, const Quat4f &q1, const Quat4f &q2, const Quat4f &q3, double t);
+	static Quat4f cubicInterpolate(const Quat4f &q0, const Quat4f &q1, const Quat4f &q2, const Quat4f &q3, float t);
 
 	// Log-difference between a and b, used for squadTangent
 	// returns log( a^-1 b )
@@ -92,16 +92,16 @@ public:
 	// returns a unit quaternion that's a uniformly distributed rotation
 	// given u[i] is a uniformly distributed random number in [0,1]
 	// taken from Graphics Gems II
-	static Quat4f randomRotation(double u0, double u1, double u2);
+	static Quat4f randomRotation(float u0, float u1, float u2);
 
 private:
-	double m_elements[4];
+	float m_elements[4];
 };
 
 Quat4f operator+(const Quat4f &q0, const Quat4f &q1);
 Quat4f operator-(const Quat4f &q0, const Quat4f &q1);
 Quat4f operator*(const Quat4f &q0, const Quat4f &q1);
-Quat4f operator*(double f, const Quat4f &q);
-Quat4f operator*(const Quat4f &q, double f);
+Quat4f operator*(float f, const Quat4f &q);
+Quat4f operator*(const Quat4f &q, float f);
 
 #endif // QUAT4F_H

@@ -16,13 +16,13 @@ public:
     {
     }
 
-    Plane(const Vector3f &normal, double d, Material *m) : Object3D(m), normal(normal), d(d)
+    Plane(const Vector3f &normal, float d, Material *m) : Object3D(m), normal(normal), d(d)
     {
     }
 
     ~Plane() override = default;
 
-    bool intersect(const Ray &r, Hit &h, double t_min) override
+    bool intersect(const Ray &r, Hit &h, float t_min) override
     {
         auto t = -(Vector3f::dot(normal, r.getOrigin()) - d) /
                  (Vector3f::dot(normal, r.getDirection()));
@@ -34,7 +34,7 @@ public:
 
 protected:
     Vector3f normal;
-    double d;
+    float d;
 };
 
 #endif //PLANE_H

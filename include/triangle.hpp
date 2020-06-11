@@ -1,3 +1,7 @@
+/*
+* This file is merged from MIT Open Course 6-837 assignment Ray Casting
+*/
+
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
@@ -20,11 +24,11 @@ public:
 			 const Vector3f &c,
 			 Material *m) : Object3D(m),
 							vertices{a, b, c},
-							normal(Vector3f::cross(a - b, a - c).normalized())
+							hasTex(false)
 	{
 	}
 
-	bool intersect(const Ray &ray, Hit &hit, double t_min) override
+	bool intersect(const Ray &ray, Hit &hit, float t_min) override
 	{
 		auto e1 = vertices[0] - vertices[1];
 		auto e2 = vertices[0] - vertices[2];
@@ -38,13 +42,18 @@ public:
 		auto gama = Matrix3f(d, e1, s).determinant() / tem;
 		if (beta < 0 || gama < 0 || beta + gama > 1)
 			return false;
-		hit.set(t, material, Vector3f::dot(d, normal) < 0 ? normal : -normal);
+		auto normal = normals[0] * (1 - beta - gama) + normals[1] * beta + normals[2] * gama;
+		normal.normalize();
+		//hit.set(t, material, Vector3f::dot(d, normal) < 0 ? normal : -normal);
+		hit.set(t, material, normal);
 		return true;
 	}
-	Vector3f normal;
-	Vector3f vertices[3];
+	bool hasTex;
+	Vector3f normals[3];
+	Vector2f texCoords[3];
 
 protected:
+	Vector3f vertices[3];
 };
 
 #endif //TRIANGLE_H

@@ -41,12 +41,12 @@ public:
         return normalized_direction;
     }
 
-    double getDirectionLength() const
+    float getDirectionLength() const
     {
         return direction_length;
     }
 
-    Vector3f pointAtParameter(double t) const
+    Vector3f pointAtParameter(float t) const
     {
         return origin + direction * t;
     }
@@ -55,7 +55,7 @@ private:
     Vector3f origin;
     Vector3f direction;
     Vector3f normalized_direction;
-    double direction_length;
+    float direction_length;
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Ray &r)

@@ -13,7 +13,7 @@ public:
         this->center = center;
         this->direction = direction.normalized();
         this->horizontal = Vector3f::cross(this->direction, up).normalized();
-        this->up = Vector3f::cross(this->horizontal, this->direction);
+        this->up = Vector3f::cross(this->horizontal, this->direction).normalized();
         this->width = imgW;
         this->height = imgH;
     }
@@ -43,7 +43,7 @@ class PerspectiveCamera : public Camera
 
 public:
     PerspectiveCamera(const Vector3f &center, const Vector3f &direction,
-                      const Vector3f &up, int imgW, int imgH, double angle) : Camera(center, direction, up, imgW, imgH)
+                      const Vector3f &up, int imgW, int imgH, float angle) : Camera(center, direction, up, imgW, imgH)
     {
         // angle is in radian.
         f_x = width / (2 * tan(angle / 2));
@@ -58,7 +58,7 @@ public:
     }
 
 private:
-    double f_x, f_y;
+    float f_x, f_y;
 };
 
 #endif //CAMERA_H

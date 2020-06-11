@@ -83,7 +83,7 @@ private:
 
     Vector3f readVector3f();
 
-    double readFloat();
+    float readFloat();
     int readInt();
 
     FILE *file;

@@ -11,11 +11,11 @@ public:
 	static const Vector3f RIGHT;
 	static const Vector3f FORWARD;
 
-	Vector3f(double f = 0.f);
-	Vector3f(double x, double y, double z);
+	Vector3f(float f = 0.f);
+	Vector3f(float x, float y, float z);
 
-	Vector3f(const Vector2f &xy, double z);
-	Vector3f(double x, const Vector2f &yz);
+	Vector3f(const Vector2f &xy, float z);
+	Vector3f(float x, const Vector2f &yz);
 
 	// copy constructors
 	Vector3f(const Vector3f &rv);
@@ -26,16 +26,16 @@ public:
 	// no destructor necessary
 
 	// returns the ith element
-	const double &operator[](int i) const;
-	double &operator[](int i);
+	const float &operator[](int i) const;
+	float &operator[](int i);
 
-	double &x();
-	double &y();
-	double &z();
+	float &x();
+	float &y();
+	float &z();
 
-	double x() const;
-	double y() const;
-	double z() const;
+	float x() const;
+	float y() const;
+	float z() const;
 
 	Vector2f xy() const;
 	Vector2f xz() const;
@@ -45,8 +45,8 @@ public:
 	Vector3f yzx() const;
 	Vector3f zxy() const;
 
-	double length() const;
-	double squaredLength() const;
+	float length() const;
+	float squaredLength() const;
 
 	void normalize();
 	Vector3f normalized() const;
@@ -56,28 +56,28 @@ public:
 	void negate();
 
 	// ---- Utility ----
-	operator const double *() const; // automatic type conversion for OpenGL
-	operator double *();			 // automatic type conversion for OpenGL
+	operator const float *() const; // automatic type conversion for OpenGL
+	operator float *();			 // automatic type conversion for OpenGL
 	void print() const;
 
 	Vector3f &operator+=(const Vector3f &v);
 	Vector3f &operator-=(const Vector3f &v);
-	Vector3f &operator*=(double f);
+	Vector3f &operator*=(float f);
 
-	static double dot(const Vector3f &v0, const Vector3f &v1);
+	static float dot(const Vector3f &v0, const Vector3f &v1);
 	static Vector3f cross(const Vector3f &v0, const Vector3f &v1);
 
 	// computes the linear interpolation between v0 and v1 by alpha \in [0,1]
 	// returns v0 * ( 1 - alpha ) * v1 * alpha
-	static Vector3f lerp(const Vector3f &v0, const Vector3f &v1, double alpha);
+	static Vector3f lerp(const Vector3f &v0, const Vector3f &v1, float alpha);
 
 	// computes the cubic catmull-rom interpolation between p0, p1, p2, p3
 	// by t \in [0,1].  Guarantees that at t = 0, the result is p0 and
 	// at p1, the result is p2.
-	static Vector3f cubicInterpolate(const Vector3f &p0, const Vector3f &p1, const Vector3f &p2, const Vector3f &p3, double t);
+	static Vector3f cubicInterpolate(const Vector3f &p0, const Vector3f &p1, const Vector3f &p2, const Vector3f &p3, float t);
 
 private:
-	double m_elements[3];
+	float m_elements[3];
 };
 
 // component-wise operators
@@ -90,9 +90,9 @@ Vector3f operator/(const Vector3f &v0, const Vector3f &v1);
 Vector3f operator-(const Vector3f &v);
 
 // multiply and divide by scalar
-Vector3f operator*(double f, const Vector3f &v);
-Vector3f operator*(const Vector3f &v, double f);
-Vector3f operator/(const Vector3f &v, double f);
+Vector3f operator*(float f, const Vector3f &v);
+Vector3f operator*(const Vector3f &v, float f);
+Vector3f operator/(const Vector3f &v, float f);
 
 bool operator==(const Vector3f &v0, const Vector3f &v1);
 bool operator!=(const Vector3f &v0, const Vector3f &v1);

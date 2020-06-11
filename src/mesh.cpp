@@ -1,3 +1,7 @@
+/*
+* This file is copied from MIT Open Course 6-837 assignment Ray Casting
+*/
+
 #include "mesh.hpp"
 #include <fstream>
 #include <iostream>
@@ -6,25 +10,32 @@
 #include <utility>
 #include <sstream>
 
-bool Mesh::intersect(const Ray &r, Hit &h, double t_min)
+bool Mesh::intersect(const Ray &r, Hit &h, float tmin)
 {
-    // Optional: Change this brute force method into a faster one.
     bool result = false;
-    for (int triId = 0; triId < (int)t.size(); ++triId)
+    for (unsigned int i = 0; i < t.size(); i++)
     {
-        TriangleIndex &triIndex = t[triId];
-        Triangle triangle(v[triIndex[0]],
-                          v[triIndex[1]], v[triIndex[2]], material);
-        triangle.normal = n[triId];
-        result |= triangle.intersect(r, h, t_min);
+        Triangle triangle(v[t[i][0]],
+                          v[t[i][1]], v[t[i][2]], material);
+        for (int jj = 0; jj < 3; jj++)
+        {
+            triangle.normals[jj] = n[t[i][jj]];
+        }
+        if (texCoord.size() > 0)
+        {
+            for (int jj = 0; jj < 3; jj++)
+            {
+                triangle.texCoords[jj] = texCoord[t[i].texID[jj]];
+            }
+            triangle.hasTex = true;
+        }
+        result |= triangle.intersect(r, h, tmin);
     }
     return result;
 }
 
 Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
 {
-
-    // Optional: Use tiny obj loader to replace this simple one.
     std::ifstream f;
     f.open(filename);
     if (!f.is_open())
@@ -38,8 +49,7 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
     std::string texTok("vt");
     char bslash = '/', space = ' ';
     std::string tok;
-    int texID;
-    while (true)
+    while (1)
     {
         std::getline(f, line);
         if (f.eof())
@@ -68,22 +78,24 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
             {
                 std::replace(line.begin(), line.end(), bslash, space);
                 std::stringstream facess(line);
-                TriangleIndex trig;
+                Trig trig;
                 facess >> tok;
                 for (int ii = 0; ii < 3; ii++)
                 {
-                    facess >> trig[ii] >> texID;
+                    facess >> trig[ii] >> trig.texID[ii];
                     trig[ii]--;
+                    trig.texID[ii]--;
                 }
                 t.push_back(trig);
             }
             else
             {
-                TriangleIndex trig;
+                Trig trig;
                 for (int ii = 0; ii < 3; ii++)
                 {
                     ss >> trig[ii];
                     trig[ii]--;
+                    trig.texID[ii] = 0;
                 }
                 t.push_back(trig);
             }
@@ -93,22 +105,29 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
             Vector2f texcoord;
             ss >> texcoord[0];
             ss >> texcoord[1];
+            texCoord.push_back(texcoord);
         }
     }
-    computeNormal();
+    computeNorm();
 
     f.close();
 }
 
-void Mesh::computeNormal()
+void Mesh::computeNorm()
 {
-    n.resize(t.size());
-    for (int triId = 0; triId < (int)t.size(); ++triId)
+    n.resize(v.size());
+    for (unsigned int ii = 0; ii < t.size(); ii++)
     {
-        TriangleIndex &triIndex = t[triId];
-        Vector3f a = v[triIndex[1]] - v[triIndex[0]];
-        Vector3f b = v[triIndex[2]] - v[triIndex[0]];
+        Vector3f a = v[t[ii][1]] - v[t[ii][0]];
+        Vector3f b = v[t[ii][2]] - v[t[ii][0]];
         b = Vector3f::cross(a, b);
-        n[triId] = b / b.length();
+        for (int jj = 0; jj < 3; jj++)
+        {
+            n[t[ii][jj]] += b;
+        }
+    }
+    for (unsigned int ii = 0; ii < v.size(); ii++)
+    {
+        n[ii].normalize();
     }
 }

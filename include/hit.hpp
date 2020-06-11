@@ -16,7 +16,7 @@ public:
         t = 1e38;
     }
 
-    Hit(double _t, Material *m, const Vector3f &n)
+    Hit(float _t, Material *m, const Vector3f &n)
     {
         t = _t;
         material = m;
@@ -33,7 +33,7 @@ public:
     // destructor
     ~Hit() = default;
 
-    double getT() const
+    float getT() const
     {
         return t;
     }
@@ -48,7 +48,7 @@ public:
         return normal;
     }
 
-    void set(double _t, Material *m, const Vector3f &n)
+    void set(float _t, Material *m, const Vector3f &n)
     {
         t = _t;
         material = m;
@@ -56,7 +56,7 @@ public:
     }
 
 private:
-    double t;
+    float t;
     Material *material;
     Vector3f normal;
 };
