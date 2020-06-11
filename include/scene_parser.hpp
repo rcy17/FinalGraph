@@ -1,3 +1,7 @@
+/*
+* This file is merged from MIT Open Course 6-837 assignment Ray Casting
+*/
+
 #ifndef SCENE_PARSER_H
 #define SCENE_PARSER_H
 
@@ -33,6 +37,11 @@ public:
     Vector3f getBackgroundColor() const
     {
         return background_color;
+    }
+
+    Vector3f getAmbientLight() const
+    {
+        return ambient_light;
     }
 
     int getNumLights() const
@@ -82,6 +91,7 @@ private:
     int getToken(char token[MAX_PARSER_TOKEN_LENGTH]);
 
     Vector3f readVector3f();
+    Vector2f readVector2f();
 
     float readFloat();
     int readInt();
@@ -89,6 +99,7 @@ private:
     FILE *file;
     Camera *camera;
     Vector3f background_color;
+    Vector3f ambient_light;
     int num_lights;
     Light **lights;
     int num_materials;

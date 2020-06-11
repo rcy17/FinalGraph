@@ -1,3 +1,7 @@
+/*
+* This file is merged from MIT Open Course 6-837 assignment Ray Casting
+*/
+
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -50,9 +54,12 @@ SceneParser::SceneParser(const char *filename)
     fclose(file);
     file = nullptr;
 
+    // if no lights are specified, set ambient light to white
+    // (do solid color ray casting)
     if (num_lights == 0)
     {
         printf("WARNING:    No lights specified\n");
+        ambient_light = Vector3f(1, 1, 1);
     }
 }
 
@@ -138,6 +145,7 @@ void SceneParser::parsePerspectiveCamera()
     assert(!strcmp(token, "angle"));
     float angle_degrees = readFloat();
     float angle_radians = DegreesToRadians(angle_degrees);
+    // Here add width and height parser from scene.txt
     getToken(token);
     assert(!strcmp(token, "width"));
     int width = readInt();
@@ -165,6 +173,10 @@ void SceneParser::parseBackground()
         else if (!strcmp(token, "color"))
         {
             background_color = readVector3f();
+        }
+        else if (!strcmp(token, "ambientLight"))
+        {
+            ambient_light = readVector3f();
         }
         else
         {
@@ -302,7 +314,6 @@ Material *SceneParser::parseMaterial()
         }
         else if (strcmp(token, "texture") == 0)
         {
-            // Optional: read in texture and draw it.
             getToken(filename);
         }
         else
@@ -312,6 +323,10 @@ Material *SceneParser::parseMaterial()
         }
     }
     auto *answer = new Material(diffuseColor, specularColor, shininess);
+    if (filename[0] != 0)
+    {
+        answer->loadTexture(filename);
+    }
     return answer;
 }
 
@@ -591,6 +606,18 @@ Vector3f SceneParser::readVector3f()
         assert(0);
     }
     return Vector3f(x, y, z);
+}
+
+Vector2f SceneParser::readVector2f()
+{
+    float u, v;
+    int count = fscanf(file, "%f %f", &u, &v);
+    if (count != 2)
+    {
+        printf("Error trying to read 2 floats to make a Vec2f\n");
+        assert(0);
+    }
+    return Vector2f(u, v);
 }
 
 float SceneParser::readFloat()

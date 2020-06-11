@@ -6,7 +6,7 @@
 
 #include "ray.hpp"
 #include "hit.hpp"
-#include <iostream>
+#include "texture.hpp"
 
 // DONE: Implement Shade function that computes Phong introduced in class.
 class Material
@@ -35,6 +35,11 @@ public:
         return shaded;
     }
 
+    void loadTexture(const char *filename)
+    {
+        t.load(filename);
+    }
+
 protected:
     template <typename T>
     T ReLU(T x)
@@ -45,6 +50,7 @@ protected:
     Vector3f diffuseColor;
     Vector3f specularColor;
     float shininess;
+    Texture t;
 };
 
 #endif // MATERIAL_H

@@ -19,7 +19,8 @@ SET(PA1_SOURCES
         src/image.cpp
         src/main.cpp
         src/mesh.cpp
-        src/scene_parser.cpp)
+        src/scene_parser.cpp
+        src/texture.cpp)
 
 SET(PA1_INCLUDES
         include/camera.hpp
@@ -36,6 +37,7 @@ SET(PA1_INCLUDES
         include/sphere.hpp
         include/transform.hpp
         include/triangle.hpp
+        include/texture.hpp
         )
 
 SET(CMAKE_CXX_STANDARD 11)
