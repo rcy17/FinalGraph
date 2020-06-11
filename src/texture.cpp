@@ -14,10 +14,12 @@ void Texture::operator()(int x, int y, unsigned char *color)
     y = clamp(y, 0, height - 1);
     bimg->get_pixel(x, y, color[0], color[1], color[2]);
 }
+
 bool Texture::valid()
 {
-    return bimg != 0;
+    return bimg != nullptr;
 }
+
 ///@param x assumed to be between 0 and 1
 Vector3f
 Texture::operator()(float x, float y)

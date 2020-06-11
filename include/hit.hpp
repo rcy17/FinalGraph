@@ -3,6 +3,7 @@
 
 #include <vecmath.h>
 #include "ray.hpp"
+#include <float.h>
 
 class Material;
 
@@ -13,7 +14,8 @@ public:
     Hit()
     {
         material = nullptr;
-        t = 1e38;
+        t = FLT_MAX;
+        hasTex = false;
     }
 
     Hit(float _t, Material *m, const Vector3f &n)
@@ -21,6 +23,7 @@ public:
         t = _t;
         material = m;
         normal = n;
+        hasTex = false;
     }
 
     Hit(const Hit &h)
@@ -28,6 +31,7 @@ public:
         t = h.t;
         material = h.material;
         normal = h.normal;
+        hasTex = h.hasTex;
     }
 
     // destructor
@@ -54,6 +58,9 @@ public:
         material = m;
         normal = n;
     }
+
+    bool hasTex;
+    Vector2f texCoord;
 
 private:
     float t;

@@ -46,6 +46,11 @@ public:
 		normal.normalize();
 		//hit.set(t, material, Vector3f::dot(d, normal) < 0 ? normal : -normal);
 		hit.set(t, material, normal);
+		if (hasTex)
+		{
+			hit.texCoord = texCoords[0] * (1 - beta - gama) + texCoords[1] * beta + texCoords[2] * gama;
+			hit.hasTex = true;
+		}
 		return true;
 	}
 	bool hasTex;

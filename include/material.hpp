@@ -7,6 +7,7 @@
 #include "ray.hpp"
 #include "hit.hpp"
 #include "texture.hpp"
+#include "vector_utils.hpp"
 
 // DONE: Implement Shade function that computes Phong introduced in class.
 class Material
@@ -28,11 +29,19 @@ public:
     {
         Vector3f shaded = Vector3f::ZERO;
         const auto normal = hit.getNormal();
-        shaded += diffuseColor * ReLU(Vector3f::dot(dirToLight, normal));
+        if (hit.hasTex)
+        {
+            // If material has Texture, then don't use diffuseColor
+            auto textureColor = t(hit.texCoord.x(), hit.texCoord.y());
+            shaded += textureColor * ReLU(Vector3f::dot(dirToLight, normal));
+        }
+        else
+        {
+            shaded += diffuseColor * ReLU(Vector3f::dot(dirToLight, normal));
+        }
         const auto r_x = 2 * Vector3f::dot(dirToLight, normal) * normal - dirToLight;
         shaded += specularColor * pow(ReLU(Vector3f::dot(-ray.getDirection(), r_x)), shininess);
-        shaded = lightColor * shaded;
-        return shaded;
+        return lightColor * shaded;
     }
 
     void loadTexture(const char *filename)

@@ -10,6 +10,7 @@
 #include "camera.hpp"
 #include "group.hpp"
 #include "light.hpp"
+#include "vector_utils.hpp"
 
 #include <string>
 
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
             if (intersected)
             {
                 auto finalColor = Vector3f::ZERO;
+                //auto finalColor = parser.getAmbientLight();
                 for (int li = 0; li < parser.getNumLights(); li++)
                 {
                     Light *light = parser.getLight(li);
@@ -59,7 +61,7 @@ int main(int argc, char *argv[])
                     light->getIllumination(camRay.pointAtParameter(hit.getT()), L, lightColor);
                     finalColor += hit.getMaterial()->Shade(camRay, hit, L, lightColor);
                 }
-                image.SetPixel(x, y, finalColor);
+                image.SetPixel(x, y, VectorUtils::clamp(finalColor));
             }
             else
             {
