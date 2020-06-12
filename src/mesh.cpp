@@ -7,7 +7,7 @@
 
 #include "mesh.hpp"
 
-#define SMOOTH (v.size() > 120)
+#define SMOOTH (v.size() > 100)
 
 void intersectCall(int idx, void **arg)
 {
@@ -49,8 +49,7 @@ bool Mesh::intersect(const Ray &r, Hit &h, float tmin)
 bool Mesh ::intersectTrig(int idx)
 {
     bool result = false;
-    Triangle triangle(v[t[idx][0]],
-                      v[t[idx][1]], v[t[idx][2]], material);
+    Triangle triangle(v[t[idx][0]], v[t[idx][1]], v[t[idx][2]], material);
 
     //some shitty hack
     //change at will

@@ -24,7 +24,6 @@ SET(PA5_SOURCES
         src/noise.cpp
         src/octree.cpp
         src/perlin_noise.cpp
-        src/ray_tracer.cpp
         src/scene_parser.cpp
         src/texture.cpp        
         )
@@ -61,4 +60,4 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 ADD_EXECUTABLE(${PROJECT_NAME} ${PA5_SOURCES} ${PA5_INCLUDES})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} vecmath)
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PRIVATE include)
-ADD_DEFINITIONS("-Wall -g")
+ADD_DEFINITIONS("-Wall -g -O0")
