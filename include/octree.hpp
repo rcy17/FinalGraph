@@ -1,6 +1,9 @@
 #ifndef OCTREE_HPP
 #define OCTREE_HPP
 #include <vecmath.h>
+#include "ray.hpp"
+
+class Mesh;
 
 struct Box
 {
@@ -30,7 +33,20 @@ struct OctNode
 	}
 	std::vector<int> obj;
 };
-class Mesh;
+struct IntersectRecorder
+{
+	Mesh *m;
+	bool result;
+	const Ray &ray;
+	Hit &hit;
+	float t_min;
+	IntersectRecorder(Mesh *m, const Ray &ray, Hit &hit, float t_min)
+		: m(m), ray(ray), hit(hit), t_min(t_min), result(false)
+	{
+	}
+	bool operator()(int idx);
+};
+
 struct Octree
 {
 	//if a node contains more than 7 triangles and it
@@ -49,12 +65,10 @@ struct Octree
 				   const Mesh &m, int level);
 
 	///@brief indexing
-	unsigned char aa;
-	void proc_subtree(float tx0, float ty0, float tz0, float tx1, float ty1, float tz1, OctNode *node);
-	void intersect(const Ray &ray);
+	void proc_subtree(float tx0, float ty0, float tz0, float tx1, float ty1, float tz1,
+					  OctNode *node, unsigned char aa, IntersectRecorder &f);
 
-	void **arg;
-	void (*termFunc)(int idx, void **arg);
+	void intersect(const Ray &ray, IntersectRecorder &f);
 };
-// Octree buildOctree(const Mesh &m, int maxLevel = 7);
+Octree buildOctree(const Mesh &m, int maxLevel = 7);
 #endif

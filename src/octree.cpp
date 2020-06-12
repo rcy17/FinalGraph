@@ -212,7 +212,13 @@ int new_node(float txm, int x, float tym, int y, float tzm, int z)
 	return z;
 }
 
-void Octree::proc_subtree(float tx0, float ty0, float tz0, float tx1, float ty1, float tz1, OctNode *node)
+bool IntersectRecorder::operator()(int idx)
+{
+	result |= m->intersectTrig(idx, ray, hit, t_min);
+}
+
+void Octree::proc_subtree(float tx0, float ty0, float tz0, float tx1, float ty1, float tz1,
+						  OctNode *node, unsigned char aa, IntersectRecorder &f)
 {
 	float txm, tym, tzm;
 	int currNode;
@@ -225,7 +231,7 @@ void Octree::proc_subtree(float tx0, float ty0, float tz0, float tx1, float ty1,
 		//loop over things
 		for (unsigned int ii = 0; ii < node->obj.size(); ii++)
 		{
-			termFunc(node->obj[ii], arg);
+			f(node->obj[ii]);
 		}
 		return;
 	}
@@ -239,49 +245,49 @@ void Octree::proc_subtree(float tx0, float ty0, float tz0, float tx1, float ty1,
 		{
 		case 0:
 		{
-			proc_subtree(tx0, ty0, tz0, txm, tym, tzm, node->child[aa]);
+			proc_subtree(tx0, ty0, tz0, txm, tym, tzm, node->child[aa], aa, f);
 			currNode = new_node(txm, 4, tym, 2, tzm, 1);
 			break;
 		}
 		case 1:
 		{
-			proc_subtree(tx0, ty0, tzm, txm, tym, tz1, node->child[1 ^ aa]);
+			proc_subtree(tx0, ty0, tzm, txm, tym, tz1, node->child[1 ^ aa], aa, f);
 			currNode = new_node(txm, 5, tym, 3, tz1, 8);
 			break;
 		}
 		case 2:
 		{
-			proc_subtree(tx0, tym, tz0, txm, ty1, tzm, node->child[2 ^ aa]);
+			proc_subtree(tx0, tym, tz0, txm, ty1, tzm, node->child[2 ^ aa], aa, f);
 			currNode = new_node(txm, 6, ty1, 8, tzm, 3);
 			break;
 		}
 		case 3:
 		{
-			proc_subtree(tx0, tym, tzm, txm, ty1, tz1, node->child[3 ^ aa]);
+			proc_subtree(tx0, tym, tzm, txm, ty1, tz1, node->child[3 ^ aa], aa, f);
 			currNode = new_node(txm, 7, ty1, 8, tz1, 8);
 			break;
 		}
 		case 4:
 		{
-			proc_subtree(txm, ty0, tz0, tx1, tym, tzm, node->child[4 ^ aa]);
+			proc_subtree(txm, ty0, tz0, tx1, tym, tzm, node->child[4 ^ aa], aa, f);
 			currNode = new_node(tx1, 8, tym, 6, tzm, 5);
 			break;
 		}
 		case 5:
 		{
-			proc_subtree(txm, ty0, tzm, tx1, tym, tz1, node->child[5 ^ aa]);
+			proc_subtree(txm, ty0, tzm, tx1, tym, tz1, node->child[5 ^ aa], aa, f);
 			currNode = new_node(tx1, 8, tym, 7, tz1, 8);
 			break;
 		}
 		case 6:
 		{
-			proc_subtree(txm, tym, tz0, tx1, ty1, tzm, node->child[6 ^ aa]);
+			proc_subtree(txm, tym, tz0, tx1, ty1, tzm, node->child[6 ^ aa], aa, f);
 			currNode = new_node(tx1, 8, ty1, 8, tzm, 7);
 			break;
 		}
 		case 7:
 		{
-			proc_subtree(txm, tym, tzm, tx1, ty1, tz1, node->child[7 ^ aa]);
+			proc_subtree(txm, tym, tzm, tx1, ty1, tz1, node->child[7 ^ aa], aa, f);
 			currNode = 8;
 			break;
 		}
@@ -289,13 +295,13 @@ void Octree::proc_subtree(float tx0, float ty0, float tz0, float tx1, float ty1,
 	} while (currNode < 8);
 }
 
-void Octree::intersect(const Ray &ray)
+void Octree::intersect(const Ray &ray, IntersectRecorder &f)
 {
 	Vector3f rd = ray.getDirection();
 	//assumes rd normalized
 	rd.normalize();
 	Vector3f ro = ray.getOrigin();
-	aa = 0;
+	unsigned char aa = 0;
 	Vector3f size = box.mx + box.mn;
 	if (rd[0] < 0.0f)
 	{
@@ -329,6 +335,6 @@ void Octree::intersect(const Ray &ray)
 
 	if (max(max(tx0, ty0), tz0) <= min(min(tx1, ty1), tz1))
 	{
-		proc_subtree(tx0, ty0, tz0, tx1, ty1, tz1, &root);
+		proc_subtree(tx0, ty0, tz0, tx1, ty1, tz1, &root, aa, f);
 	}
 }

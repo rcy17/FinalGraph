@@ -9,44 +9,13 @@
 
 #define SMOOTH (v.size() > 100)
 
-void intersectCall(int idx, void **arg)
+bool Mesh::intersect(const Ray &r, Hit &h, float t_min)
 {
-    Mesh *m = (Mesh *)(arg[0]);
-    bool result = m->intersectTrig(idx);
-    arg[1] = (void *)(((bool)arg[1]) | result);
+    IntersectRecorder func(this, r, h, t_min);
+    octree.intersect(r, func);
+    return func.result;
 }
-bool Mesh::intersect(const Ray &r, Hit &h, float tmin)
-{
-    /*	bool result = false;
-	for( unsigned int i = 0 ; i < t.size() ; i++){
-		Triangle triangle(v[t[i][0]],
-			v[t[i][1]],v[t[i][2]],material);
-		for(int jj=0;jj<3;jj++){
-			triangle.normals[jj] = n[t[i][jj]];
-
-		}
-		if(texCoord.size()>0){
-			for(int jj=0;jj<3;jj++){
-				triangle.texCoords[jj] = texCoord[t[i].texID[jj]];
-			}
-			triangle.hasTex=true;
-		}
-		result |= triangle.intersect( r , h , tmin);
-	}
-	return result;
-	*/
-    ray = &r;
-    hit = &h;
-    tm = tmin;
-    void *arg[2];
-    arg[0] = this;
-    arg[1] = 0;
-    octree.arg = arg;
-    octree.termFunc = intersectCall;
-    octree.intersect(r);
-    return arg[1];
-}
-bool Mesh ::intersectTrig(int idx)
+bool Mesh::intersectTrig(int idx, const Ray &r, Hit &h, float t_min)
 {
     bool result = false;
     Triangle triangle(v[t[idx][0]], v[t[idx][1]], v[t[idx][2]], material);
@@ -77,9 +46,10 @@ bool Mesh ::intersectTrig(int idx)
         }
         triangle.hasTex = true;
     }
-    result = triangle.intersect(*ray, *hit, tm);
+    result = triangle.intersect(r, h, t_min);
     return result;
 }
+
 Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
 {
     std::ifstream f;

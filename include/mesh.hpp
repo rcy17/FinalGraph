@@ -29,13 +29,10 @@ public:
     std::vector<Vector3f> n;
     std::vector<Vector2f> texCoord;
 
-    virtual bool intersect(const Ray &r, Hit &h, float tmin);
-    virtual bool intersectTrig(int idx);
+    virtual bool intersect(const Ray &r, Hit &h, float t_min) override;
+    bool intersectTrig(int idx, const Ray &r, Hit &h, float t_min);
 
 private:
-    const Ray *ray;
-    Hit *hit;
-    float tm;
     void computeNorm();
     Octree octree;
 };

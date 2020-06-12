@@ -67,12 +67,14 @@ private:
 
     Vector3f mirrorDirection(const Vector3f &normal, const Vector3f &incoming)
     {
+        return Vector3f();
     }
 
     bool transmittedDirection(const Vector3f &normal, const Vector3f &incoming,
                               float index_n, float index_nt,
                               Vector3f &transmitted)
     {
+        return false;
     }
 };
 
