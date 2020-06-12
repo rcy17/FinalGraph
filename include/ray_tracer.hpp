@@ -28,17 +28,27 @@ public:
     {
         hit = Hit(FLT_MAX, NULL, Vector3f(0, 0, 0));
         Vector3f finalColor = Vector3f::ZERO;
+        const auto group = scene->getGroup();
 
-        bool intersected = scene->getGroup()->intersect(ray, hit, 0);
+        bool intersected = group->intersect(ray, hit, 0);
         if (intersected)
         {
             for (int li = 0; li < scene->getNumLights(); li++)
             {
                 Light *light = scene->getLight(li);
-                Vector3f L, lightColor;
+                Vector3f direction, lightColor;
                 float distance;
-                light->getIllumination(ray.pointAtParameter(hit.getT()), L, lightColor, distance);
-                finalColor += hit.getMaterial()->Shade(ray, hit, L, lightColor);
+                auto p = ray.pointAtParameter(hit.getT());
+                light->getIllumination(p, direction, lightColor, distance);
+                if (use_shadow)
+                {
+                    // judge if this intersection is in shadow
+                    Hit _hit(FLT_MAX, NULL, Vector3f(0));
+                    Ray _ray(p, direction);
+                    if (group->intersect(_ray, _hit, EPSILON))
+                        continue;
+                }
+                finalColor += hit.getMaterial()->Shade(ray, hit, direction, lightColor);
             }
             if (bounces < max_bounces)
             {

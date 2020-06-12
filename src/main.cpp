@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     SceneParser parser(argv[1]);
     const auto camera = parser.getCamera();
     Image image(camera->getWidth(), camera->getHeight());
-    RayTracer tracer(&parser, 0, 0, 0, 0);
+    RayTracer tracer(&parser, 0, true, 0, 0);
 #pragma omp parallel for schedule(dynamic, 1)
     for (int x = 0; x < camera->getWidth(); x++)
     {
