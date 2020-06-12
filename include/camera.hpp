@@ -36,7 +36,6 @@ protected:
     int height;
 };
 
-// DONE: Implement Perspective camera
 // You can add new functions or variables whenever needed.
 class PerspectiveCamera : public Camera
 {

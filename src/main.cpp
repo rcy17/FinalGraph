@@ -58,7 +58,8 @@ int main(int argc, char *argv[])
                 {
                     Light *light = parser.getLight(li);
                     Vector3f L, lightColor;
-                    light->getIllumination(camRay.pointAtParameter(hit.getT()), L, lightColor);
+                    float distance;
+                    light->getIllumination(camRay.pointAtParameter(hit.getT()), L, lightColor, distance);
                     finalColor += hit.getMaterial()->Shade(camRay, hit, L, lightColor);
                 }
                 image.SetPixel(x, y, VectorUtils::clamp(finalColor));

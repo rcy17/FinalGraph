@@ -16,7 +16,6 @@ static Vector3f transformDirection(const Matrix4f &mat, const Vector3f &dir)
     return (mat * Vector4f(dir, 0)).xyz();
 }
 
-// DONE: implement this class so that the intersect function first transforms the ray
 class Transform : public Object3D
 {
 public:

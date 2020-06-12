@@ -1,8 +1,3 @@
-/*
-* This file is copied from MIT Open Course 6-837 assignment Ray Casting
-*/
-
-#include "mesh.hpp"
 #include <fstream>
 #include <iostream>
 #include <algorithm>
@@ -10,30 +5,82 @@
 #include <utility>
 #include <sstream>
 
+#include "mesh.hpp"
+
+#define SMOOTH (v.size() > 120)
+
+void intersectCall(int idx, void **arg)
+{
+    Mesh *m = (Mesh *)(arg[0]);
+    bool result = m->intersectTrig(idx);
+    arg[1] = (void *)(((bool)arg[1]) | result);
+}
 bool Mesh::intersect(const Ray &r, Hit &h, float tmin)
 {
+    /*	bool result = false;
+	for( unsigned int i = 0 ; i < t.size() ; i++){
+		Triangle triangle(v[t[i][0]],
+			v[t[i][1]],v[t[i][2]],material);
+		for(int jj=0;jj<3;jj++){
+			triangle.normals[jj] = n[t[i][jj]];
+
+		}
+		if(texCoord.size()>0){
+			for(int jj=0;jj<3;jj++){
+				triangle.texCoords[jj] = texCoord[t[i].texID[jj]];
+			}
+			triangle.hasTex=true;
+		}
+		result |= triangle.intersect( r , h , tmin);
+	}
+	return result;
+	*/
+    ray = &r;
+    hit = &h;
+    tm = tmin;
+    void *arg[2];
+    arg[0] = this;
+    arg[1] = 0;
+    octree.arg = arg;
+    octree.termFunc = intersectCall;
+    octree.intersect(r);
+    return arg[1];
+}
+bool Mesh ::intersectTrig(int idx)
+{
     bool result = false;
-    for (unsigned int i = 0; i < t.size(); i++)
+    Triangle triangle(v[t[idx][0]],
+                      v[t[idx][1]], v[t[idx][2]], material);
+
+    //some shitty hack
+    //change at will
+    if (SMOOTH)
     {
-        Triangle triangle(v[t[i][0]],
-                          v[t[i][1]], v[t[i][2]], material);
+
         for (int jj = 0; jj < 3; jj++)
         {
-            triangle.normals[jj] = n[t[i][jj]];
+            triangle.normals[jj] = n[t[idx][jj]];
         }
-        if (texCoord.size() > 0)
-        {
-            for (int jj = 0; jj < 3; jj++)
-            {
-                triangle.texCoords[jj] = texCoord[t[i].texID[jj]];
-            }
-            triangle.hasTex = true;
-        }
-        result |= triangle.intersect(r, h, tmin);
     }
+    else
+    {
+
+        for (int jj = 0; jj < 3; jj++)
+        {
+            triangle.normals[jj] = n[idx];
+        }
+    }
+    if (texCoord.size() > 0)
+    {
+        for (int jj = 0; jj < 3; jj++)
+        {
+            triangle.texCoords[jj] = texCoord[t[idx].texID[jj]];
+        }
+        triangle.hasTex = true;
+    }
+    result = triangle.intersect(*ray, *hit, tm);
     return result;
 }
-
 Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
 {
     std::ifstream f;
@@ -108,26 +155,40 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
             texCoord.push_back(texcoord);
         }
     }
-    computeNorm();
-
     f.close();
+    computeNorm();
+    octree.build(*this);
 }
 
 void Mesh::computeNorm()
 {
-    n.resize(v.size());
-    for (unsigned int ii = 0; ii < t.size(); ii++)
+    if (SMOOTH)
     {
-        Vector3f a = v[t[ii][1]] - v[t[ii][0]];
-        Vector3f b = v[t[ii][2]] - v[t[ii][0]];
-        b = Vector3f::cross(a, b);
-        for (int jj = 0; jj < 3; jj++)
+        n.resize(v.size());
+        for (unsigned int ii = 0; ii < t.size(); ii++)
         {
-            n[t[ii][jj]] += b;
+            Vector3f a = v[t[ii][1]] - v[t[ii][0]];
+            Vector3f b = v[t[ii][2]] - v[t[ii][0]];
+            b = Vector3f::cross(a, b);
+            for (int jj = 0; jj < 3; jj++)
+            {
+                n[t[ii][jj]] += b;
+            }
+        }
+        for (unsigned int ii = 0; ii < v.size(); ii++)
+        {
+            n[ii] = n[ii] / n[ii].length();
         }
     }
-    for (unsigned int ii = 0; ii < v.size(); ii++)
+    else
     {
-        n[ii].normalize();
+        n.resize(t.size());
+        for (unsigned int ii = 0; ii < t.size(); ii++)
+        {
+            Vector3f a = v[t[ii][1]] - v[t[ii][0]];
+            Vector3f b = v[t[ii][2]] - v[t[ii][0]];
+            b = Vector3f::cross(a, b);
+            n[ii] = b.normalized();
+        }
     }
 }

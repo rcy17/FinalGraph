@@ -1,7 +1,8 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include <Vector3f.h>
+#include <vecmath.h>
+
 #include "object3d.hpp"
 
 class Light
@@ -11,7 +12,7 @@ public:
 
     virtual ~Light() = default;
 
-    virtual void getIllumination(const Vector3f &p, Vector3f &dir, Vector3f &col) const = 0;
+    virtual void getIllumination(const Vector3f &p, Vector3f &dir, Vector3f &col, float &distanceToLight) const = 0;
 };
 
 class DirectionalLight : public Light
@@ -26,15 +27,15 @@ public:
     }
 
     ~DirectionalLight() override = default;
-
-    ///@param p unused in this function
+    ///@param p unsed in this function
     ///@param distanceToLight not well defined because it's not a point light
-    void getIllumination(const Vector3f &p, Vector3f &dir, Vector3f &col) const override
+    virtual void getIllumination(const Vector3f &p, Vector3f &dir, Vector3f &col, float &distanceToLight) const
     {
         // the direction to the light is the opposite of the
         // direction of the directional light source
         dir = -direction;
         col = color;
+        distanceToLight = FLT_MAX;
     }
 
 private:
@@ -45,26 +46,27 @@ private:
 class PointLight : public Light
 {
 public:
-    PointLight() = delete;
-
-    PointLight(const Vector3f &p, const Vector3f &c)
+    PointLight(const Vector3f &p, const Vector3f &c, float fall)
     {
         position = p;
         color = c;
+        falloff = fall;
     }
 
     ~PointLight() override = default;
 
-    void getIllumination(const Vector3f &p, Vector3f &dir, Vector3f &col) const override
+    virtual void getIllumination(const Vector3f &p, Vector3f &dir, Vector3f &col, float &distanceToLight) const
     {
         // the direction to the light is the opposite of the
         // direction of the directional light source
         dir = (position - p);
+        distanceToLight = dir.length();
         dir = dir / dir.length();
-        col = color;
+        col = color / (1 + falloff * distanceToLight * distanceToLight);
     }
 
 private:
+    float falloff;
     Vector3f position;
     Vector3f color;
 };

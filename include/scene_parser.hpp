@@ -8,16 +8,18 @@
 #include <cassert>
 #include <vecmath.h>
 
-class Camera;
-class Light;
-class Material;
-class Object3D;
-class Group;
-class Sphere;
-class Plane;
-class Triangle;
-class Transform;
-class Mesh;
+#include "camera.hpp"
+#include "cube_map.hpp"
+#include "light.hpp"
+#include "material.hpp"
+#include "object3d.hpp"
+#include "group.hpp"
+#include "sphere.hpp"
+#include "plane.hpp"
+#include "triangle.hpp"
+#include "transform.hpp"
+#include "mesh.hpp"
+#include "noise.hpp"
 
 #define MAX_PARSER_TOKEN_LENGTH 1024
 
@@ -34,9 +36,13 @@ public:
         return camera;
     }
 
-    Vector3f getBackgroundColor() const
+    Vector3f getBackgroundColor(Vector3f dir = 0) const
     {
-        return background_color;
+        if (cubemap == 0)
+        {
+            return background_color;
+        }
+        return cubemap->operator()(dir);
     }
 
     Vector3f getAmbientLight() const
@@ -80,6 +86,8 @@ private:
     Light *parseDirectionalLight();
     void parseMaterials();
     Material *parseMaterial();
+    Noise *parseNoise();
+
     Object3D *parseObject(char token[MAX_PARSER_TOKEN_LENGTH]);
     Group *parseGroup();
     Sphere *parseSphere();
@@ -87,12 +95,11 @@ private:
     Triangle *parseTriangle();
     Mesh *parseTriangleMesh();
     Transform *parseTransform();
-
+    CubeMap *parseCubeMap();
     int getToken(char token[MAX_PARSER_TOKEN_LENGTH]);
 
     Vector3f readVector3f();
     Vector2f readVector2f();
-
     float readFloat();
     int readInt();
 
@@ -106,6 +113,7 @@ private:
     Material **materials;
     Material *current_material;
     Group *group;
+    CubeMap *cubemap;
 };
 
 #endif // SCENE_PARSER_H

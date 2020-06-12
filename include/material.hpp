@@ -7,59 +7,37 @@
 #include "ray.hpp"
 #include "hit.hpp"
 #include "texture.hpp"
-#include "vector_utils.hpp"
-
-// DONE: Implement Shade function that computes Phong introduced in class.
+#include "noise.hpp"
 class Material
 {
 public:
-    explicit Material(const Vector3f &d_color, const Vector3f &s_color = Vector3f::ZERO, float s = 0) : diffuseColor(d_color), specularColor(s_color), shininess(s)
-    {
-    }
+    Material(const Vector3f &d_color, const Vector3f &s_color = Vector3f::ZERO, float s = 0,
+             float r = 0);
 
     virtual ~Material() = default;
 
-    virtual Vector3f getDiffuseColor() const
-    {
-        return diffuseColor;
-    }
+    virtual Vector3f getDiffuseColor() const;
 
     Vector3f Shade(const Ray &ray, const Hit &hit,
-                   const Vector3f &dirToLight, const Vector3f &lightColor)
-    {
-        Vector3f shaded = Vector3f::ZERO;
-        const auto normal = hit.getNormal();
-        if (hit.hasTex)
-        {
-            // If material has Texture, then don't use diffuseColor
-            auto textureColor = t(hit.texCoord.x(), hit.texCoord.y());
-            shaded += textureColor * ReLU(Vector3f::dot(dirToLight, normal));
-        }
-        else
-        {
-            shaded += diffuseColor * ReLU(Vector3f::dot(dirToLight, normal));
-        }
-        const auto r_x = 2 * Vector3f::dot(dirToLight, normal) * normal - dirToLight;
-        shaded += specularColor * pow(ReLU(Vector3f::dot(-ray.getDirection(), r_x)), shininess);
-        return lightColor * shaded;
-    }
+                   const Vector3f &dirToLight, const Vector3f &lightColor);
 
-    void loadTexture(const char *filename)
-    {
-        t.load(filename);
-    }
+    static Vector3f pointwiseDot(const Vector3f &v1, const Vector3f &v2);
+
+    float clampedDot(const Vector3f &L, const Vector3f &N) const;
+    void loadTexture(const char *filename);
+    float getRefractionIndex();
+    Vector3f getDiffuseColor();
+    Vector3f getSpecularColor();
+
+    void setNoise(const Noise &n);
 
 protected:
-    template <typename T>
-    T ReLU(T x)
-    {
-        return x > 0 ? x : 0;
-    }
-
     Vector3f diffuseColor;
+    float refractionIndex;
     Vector3f specularColor;
     float shininess;
     Texture t;
+    Noise noise;
 };
 
 #endif // MATERIAL_H
