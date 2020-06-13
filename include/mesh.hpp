@@ -18,6 +18,7 @@ struct Trig
     int operator[](int i) const { return x[i]; }
     int x[3];
     int texID[3];
+    int nID[3];
 };
 
 class Mesh : public Object3D
@@ -35,6 +36,7 @@ public:
 private:
     void computeNorm();
     Octree octree;
+    bool hasNormal;
 };
 
 #endif

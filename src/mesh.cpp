@@ -43,7 +43,14 @@ bool Mesh::intersectTrig(int idx, const Ray &r, Hit &h, double t_min)
 
     //some shitty hack
     //change at will
-    if (SMOOTH)
+    if (hasNormal)
+    {
+        for (int jj = 0; jj < 3; jj++)
+        {
+            triangle.normals[jj] = n[t[idx].nID[jj]];
+        }
+    }
+    else if (SMOOTH)
     {
 
         for (int jj = 0; jj < 3; jj++)
@@ -71,7 +78,7 @@ bool Mesh::intersectTrig(int idx, const Ray &r, Hit &h, double t_min)
     return result;
 }
 
-Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
+Mesh::Mesh(const char *filename, Material *material) : Object3D(material), hasNormal(false)
 {
     std::ifstream f;
     f.open(filename);
@@ -84,7 +91,8 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
     std::string vTok("v");
     std::string fTok("f");
     std::string texTok("vt");
-    char bslash = '/', space = ' ';
+    std::string nTok("vn");
+    char slash = '/', space = ' ';
     std::string tok;
     while (1)
     {
@@ -111,31 +119,42 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
         }
         else if (tok == fTok)
         {
-            if (line.find(bslash) != std::string::npos)
+            Trig trig;
+            for (int ii = 0; ii < 3; ii++)
             {
-                std::replace(line.begin(), line.end(), bslash, space);
-                std::stringstream facess(line);
-                Trig trig;
-                facess >> tok;
-                for (int ii = 0; ii < 3; ii++)
+                std::string tem;
+                ss >> tem;
+                auto first_slash = tem.find(slash);
+                auto last_slash = tem.rfind(slash);
+                std::replace(tem.begin(), tem.end(), slash, space);
+                std::stringstream face(tem);
+                if (first_slash == std::string::npos)
                 {
-                    facess >> trig[ii] >> trig.texID[ii];
-                    trig[ii]--;
-                    trig.texID[ii]--;
-                }
-                t.push_back(trig);
-            }
-            else
-            {
-                Trig trig;
-                for (int ii = 0; ii < 3; ii++)
-                {
-                    ss >> trig[ii];
+                    // f
+                    face >> trig[ii];
                     trig[ii]--;
                     trig.texID[ii] = 0;
+                    trig.nID[ii] = 0;
                 }
-                t.push_back(trig);
+                else if (first_slash == last_slash)
+                {
+                    // f/vt
+                    face >> trig[ii] >> trig.texID[ii];
+                    trig[ii]--;
+                    trig.texID[ii]--;
+                    trig.nID[ii] = 0;
+                }
+                else
+                {
+                    // f/vt/vn
+                    face >> trig[ii] >> trig.texID[ii] >> trig.nID[ii];
+                    trig[ii]--;
+                    trig.texID[ii]--;
+                    trig.nID[ii]--;
+                    hasNormal = true;
+                }
             }
+            t.push_back(trig);
         }
         else if (tok == texTok)
         {
@@ -144,9 +163,16 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material)
             ss >> texcoord[1];
             texCoord.push_back(texcoord);
         }
+        else if (tok == nTok)
+        {
+            Vector3f normal;
+            ss >> normal[0] >> normal[1] >> normal[2];
+            n.push_back(normal);
+        }
     }
     f.close();
-    computeNorm();
+    if (!hasNormal)
+        computeNorm();
     octree.build(*this);
 }
 
