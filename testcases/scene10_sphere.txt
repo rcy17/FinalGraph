@@ -50,7 +50,6 @@ Materials {
 
 Background {
     color 0.2 0.1 0.6
-    ambientLight 0.2 0.2 0.2
     cubeMap tex/church
 }
 
@@ -71,17 +70,16 @@ Group {
 
     MaterialIndex 1
     Transform {
-    Translate 1 0.5 -3.5
-    Scale 0.8 0.8 0.8
-    TriangleMesh {
-	obj_file cube.obj
-    }
+        Translate 1 0.5 -3.5
+        Scale 0.8 0.8 0.8
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
     }
     MaterialIndex 2
     Plane {
-	normal 0 1 0
+        normal 0 1 0
         offset -1
     }
 
 }
-

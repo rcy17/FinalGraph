@@ -25,7 +25,13 @@ Materials {
     Material { 
         diffuseColor 0.4 0.4 0.4 
         specularColor 0.5 0.5 0.5
-        refractionIndex 1.5
+        Noise {
+			color 0 0 0
+			color 0.1 0.8 0.3
+			octaves 4
+			frequency 20
+			amplitude 4
+		}
     }
     Material { 
         diffuseColor 1 1 1
@@ -37,14 +43,17 @@ Materials {
 Group {
     numObjects 2
     MaterialIndex 0
-    Sphere {
-        center 0 0 0
-        radius 1 
+        Transform {
+        Scale  1 1.15 1
+        Sphere {
+	        center 0 0 0 
+            radius 1 
+        }
     }
     MaterialIndex 1
     Plane {
         normal 0 1 0
-        offset -1
+        offset -1.5
     }
 
 

@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
         camera->setSize(parser.width, parser.height);
     Image image(camera->getWidth(), camera->getHeight());
     RayTracer tracer(&scene, parser.bounces, parser.shadows, parser.refractions);
+    unsigned int rand_seed = 0;
 
 #pragma omp parallel for schedule(dynamic, 1)
     for (int y = 0; y < camera->getHeight(); y++)
@@ -62,17 +63,30 @@ int main(int argc, char *argv[])
         for (int x = 0; x < camera->getWidth(); x++)
         {
             bool debug = false;
-            if (y == 110 && x < 3)
+            if (y == 48 && x == 48)
             {
                 debug = true;
             }
-            Ray camRay = camera->generateRay(Vector2f(x, y));
-            Hit hit;
-            if (debug)
+            Vector3f color;
+            if (parser.jitter)
             {
-                printf("\n\n(%d, %d)\n", x, y);
+                for (int i = 0; i < 9; i++)
+                {
+
+                    auto dx = double(rand_r(&rand_seed)) / __INT_MAX__;
+                    auto dy = double(rand_r(&rand_seed)) / __INT_MAX__;
+                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, y - 0.5 + dy));
+                    Hit hit;
+                    color += tracer.traceRay(camRay, 0.f, 0, hit, 1.f, debug);
+                }
+                color = color / 9;
             }
-            auto color = tracer.traceRay(camRay, 0.f, 0, hit, 1.f, debug);
+            else
+            {
+                Ray camRay = camera->generateRay(Vector2f(x, y));
+                Hit hit;
+                color = tracer.traceRay(camRay, 0.f, 0, hit, 1.f, debug);
+            }
             image.SetPixel(x, y, color);
         }
     }

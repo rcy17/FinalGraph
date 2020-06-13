@@ -31,13 +31,8 @@ public:
         const auto &direction = r.getNormalizedDirection();
         auto l = center - origin;
         auto l_square = l.squaredLength();
-        auto relation = getRelation(l_square);
-        if (relation == JUSTON)
-            return false;
         auto t_p = Vector3f::dot(l, direction);
 
-        if (t_p < 0 && relation == OUTSIDE)
-            return false;
         auto d_square = l_square - t_p * t_p;
         if (d_square >= radius_square)
             return false;
@@ -50,34 +45,11 @@ public:
             return false;
         auto p = r.pointAtParameter(t);
         const auto normal = (p - center).normalized();
-        h.set(t, material, relation == OUTSIDE ? normal : -normal);
+        h.set(t, material, normal);
         return true;
     }
 
 protected:
-    enum Relation
-    {
-        INSIDE,
-        JUSTON,
-        OUTSIDE,
-    };
-
-    Relation getRelation(double square_length)
-    {
-        if (square_length > radius)
-        {
-            return OUTSIDE;
-        }
-        else if (square_length < radius)
-        {
-            return INSIDE;
-        }
-        else
-        {
-            return JUSTON;
-        }
-    }
-
     Vector3f center;
     double radius;
     double radius_square;
