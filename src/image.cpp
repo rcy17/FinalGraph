@@ -333,6 +333,7 @@ void Image::GaussianBlur()
 {
     Image temp(width, height);
     const double k[] = {0.1201, 0.2339, 0.2931, 0.2339, 0.1201};
+#pragma omp parallel for schedule(auto)
     for (int y = 0; y < height; y++)
     {
         for (int x = -2; x < width - 2; x++)
@@ -345,7 +346,7 @@ void Image::GaussianBlur()
             temp.SetPixel(x + 2, y, color);
         }
     }
-
+#pragma omp parallel for schedule(auto)
     for (int x = 0; x < width; x++)
     {
         for (int y = -2; y < height - 2; y++)
