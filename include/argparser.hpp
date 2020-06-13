@@ -40,6 +40,7 @@ public:
                   }
                   else if (!strcmp(argv[i], "-size"))
                   {
+                        set_size = 1;
                         i++;
                         assert(i < argc);
                         width = atoi(argv[i]);
@@ -71,6 +72,10 @@ public:
                   {
                         shadows = 1;
                   }
+                  else if (!strcmp(argv[i], "-refractions"))
+                  {
+                        refractions = 1;
+                  }
 
                   // supersampling
                   else if (strcmp(argv[i], "-jitter") == 0)
@@ -96,8 +101,9 @@ public:
             output_file = NULL;
             depth_file = NULL;
             normals_file = NULL;
-            width = 100;
-            height = 100;
+            set_size = 0;
+            width = 0;
+            height = 0;
             stats = 0;
 
             // rendering options
@@ -105,6 +111,7 @@ public:
             depth_max = 1;
             bounces = 0;
             shadows = 0;
+            refractions = 0;
 
             // sampling
             jitter = 0;
@@ -120,6 +127,7 @@ public:
       char *output_file;
       char *depth_file;
       char *normals_file;
+      int set_size;
       int width;
       int height;
       int stats;
@@ -129,6 +137,7 @@ public:
       float depth_max;
       int bounces;
       int shadows;
+      int refractions;
 
       // supersampling
       int jitter;

@@ -43,9 +43,10 @@ public:
             return false;
         // t2 is t' in PPT
         auto t2 = sqrt(radius_square - d_square);
-        auto t = t_p + t2 * (relation == INSIDE ? 1 : -1);
-        t /= r.getDirectionLength();
-        if (t < t_min || t > h.getT())
+        auto t_close = (t_p - t2) / r.getDirectionLength();
+        auto t_far = (t_p + t2) / r.getDirectionLength();
+        auto t = t_close > t_min ? t_close : t_far;
+        if (t > h.getT() || t < t_min)
             return false;
         auto p = r.pointAtParameter(t);
         const auto normal = (p - center).normalized();

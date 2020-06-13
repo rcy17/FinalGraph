@@ -24,6 +24,7 @@ public:
 
     int getWidth() const { return width; }
     int getHeight() const { return height; }
+    virtual void setSize(int width, int height) { this->width = width, this->height = height; }
 
 protected:
     // Extrinsic parameters
@@ -47,6 +48,14 @@ public:
         // angle is in radian.
         f_x = width / (2 * tan(angle / 2));
         f_y = height / (2 * tan(angle / 2));
+        this->angle = angle;
+    }
+
+    void setSize(int width, int height)
+    {
+        this->width = width, this->height = height;
+        f_x = width / (2 * tan(angle / 2));
+        f_y = height / (2 * tan(angle / 2));
     }
 
     Ray generateRay(const Vector2f &point) override
@@ -58,6 +67,7 @@ public:
 
 private:
     float f_x, f_y;
+    float angle;
 };
 
 #endif //CAMERA_H

@@ -51,6 +51,14 @@ public:
         return origin + direction * t;
     }
 
+    void print() const
+    {
+        printf("Ray {\n");
+        origin.print();
+        direction.print();
+        printf("}\n");
+    }
+
 private:
     Vector3f origin;
     Vector3f direction;

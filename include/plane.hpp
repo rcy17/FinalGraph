@@ -27,7 +27,8 @@ public:
                  (Vector3f::dot(normal, r.getDirection()));
         if (t > h.getT() || t < t_min || t < 0)
             return false;
-        h.set(t, material, Vector3f::dot(r.getDirection(), normal) < 0 ? normal : -normal);
+        //h.set(t, material, Vector3f::dot(r.getDirection(), normal) < 0 ? normal : -normal);
+        h.set(t, material, normal);
         return true;
     }
 
