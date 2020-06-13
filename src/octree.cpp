@@ -18,12 +18,12 @@ bool intersect(double *a, double *b)
 }
 
 ///@brief two boxes intersect
-bool boxOverlap(Box *a, Box *b)
+bool boxOverlap(const Box &a, const Box &b)
 {
 	for (int dim = 0; dim < 3; dim++)
 	{
-		double ia[2] = {a->mn[dim], a->mx[dim]};
-		double ib[2] = {b->mn[dim], b->mx[dim]};
+		double ia[2] = {a.mn[dim], a.mx[dim]};
+		double ib[2] = {b.mn[dim], b.mx[dim]};
 		bool inter = intersect(ia, ib);
 		if (!inter)
 		{
@@ -32,6 +32,7 @@ bool boxOverlap(Box *a, Box *b)
 	}
 	return true;
 }
+
 bool inside(const Box &a, const Box &b)
 {
 	for (int dim = 0; dim < 3; dim++)
@@ -88,7 +89,6 @@ void Octree::buildNode(OctNode &parent, const Box &pbox,
 	Vector3f mid = (mn + mx) / 2;
 	//childBox;
 	Box cBox[8];
-	//ewww....
 	cBox[0] = Box(mn, mid);
 	cBox[1] = Box(mn[0], mn[1], mid[2], mid[0], mid[1], mx[2]);
 	cBox[2] = Box(mn[0], mid[1], mn[2], mid[0], mx[1], mid[2]);
@@ -96,8 +96,10 @@ void Octree::buildNode(OctNode &parent, const Box &pbox,
 	cBox[4] = Box(mid[0], mn[1], mn[2], mx[0], mid[1], mid[2]);
 	cBox[5] = Box(mid[0], mn[1], mid[2], mx[0], mid[1], mx[2]);
 	cBox[6] = Box(mid[0], mid[1], mn[2], mx[0], mx[1], mid[2]);
-	cBox[7] = Box(mid[0], mid[1], mid[2], mx[0], mx[1], mx[2]);
+	cBox[7] = Box(mid, mx);
 	//std::vector<bool>added (trigs.size(),false);
+
+#pragma omp parallel for schedule(static, 1) if (level == 1)
 	for (int ii = 0; ii < 8; ii++)
 	{
 		std::vector<int> childTrigs;
@@ -105,7 +107,7 @@ void Octree::buildNode(OctNode &parent, const Box &pbox,
 		{
 			int trigIdx = trigs[vi];
 			Box tBox = trigBox(trigIdx, m);
-			if (inside(tBox, cBox[ii]) || boxOverlap(&tBox, &(cBox[ii])))
+			if (inside(tBox, cBox[ii]) || boxOverlap(tBox, cBox[ii]))
 			{
 				childTrigs.push_back(trigIdx);
 				//		added[vi]=true;
@@ -113,6 +115,7 @@ void Octree::buildNode(OctNode &parent, const Box &pbox,
 		}
 		buildNode(*(parent.child[ii]), cBox[ii], childTrigs, m, level);
 	}
+
 	//	for (unsigned int ii = 0 ;ii<added.size();ii++){
 	//		if(!added[ii]){
 	//			std::cout<<ii<<" not added\n";
@@ -322,9 +325,9 @@ void Octree::intersect(const Ray &ray, IntersectRecorder &f)
 		aa |= 1;
 	}
 
-	double divx = 1 / rd[0]; // IEEE stability fix
-	double divy = 1 / rd[1];
-	double divz = 1 / rd[2];
+	double divx = clamp<double>(1 / rd[0], -FLT_MAX, FLT_MAX); // IEEE stability fix
+	double divy = clamp<double>(1 / rd[1], -FLT_MAX, FLT_MAX);
+	double divz = clamp<double>(1 / rd[2], -FLT_MAX, FLT_MAX);
 
 	double tx0 = (box.mn[0] - ro[0]) * divx;
 	double tx1 = (box.mx[0] - ro[0]) * divx;

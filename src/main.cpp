@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
         for (int x = 0; x < image.Width(); x++)
         {
             bool debug = false;
-            if (y == 48 && x == 48 && 0)
+            if (y == 32 && x == 17 && 0)
             {
                 debug = true;
             }

@@ -14,7 +14,7 @@ struct Box
 	}
 	Box(double mnx, double mny, double mnz,
 		double mxx, double mxy, double mxz) : mn(Vector3f(mnx, mny, mnz)),
-										   mx(Vector3f(mxx, mxy, mxz))
+											  mx(Vector3f(mxx, mxy, mxz))
 	{
 	}
 };

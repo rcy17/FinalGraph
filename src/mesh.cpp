@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <utility>
 #include <sstream>
+#include <omp.h>
 
 #include "mesh.hpp"
 
@@ -173,7 +174,12 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material), hasNo
     f.close();
     if (!hasNormal)
         computeNorm();
+    auto start = omp_get_wtime();
+    fprintf(stderr, "Building octree...");
     octree.build(*this);
+    auto stop = omp_get_wtime();
+
+    fprintf(stderr, "\rCost %f s to build octree\n", double(stop - start));
 }
 
 void Mesh::computeNorm()
