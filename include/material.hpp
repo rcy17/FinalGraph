@@ -11,8 +11,8 @@
 class Material
 {
 public:
-    Material(const Vector3f &d_color, const Vector3f &s_color = Vector3f::ZERO, float s = 0,
-             float r = 0);
+    Material(const Vector3f &d_color, const Vector3f &s_color = Vector3f::ZERO, double s = 0,
+             double r = 0);
 
     virtual ~Material() = default;
 
@@ -23,9 +23,9 @@ public:
 
     static Vector3f pointwiseDot(const Vector3f &v1, const Vector3f &v2);
 
-    float clampedDot(const Vector3f &L, const Vector3f &N) const;
+    double clampedDot(const Vector3f &L, const Vector3f &N) const;
     void loadTexture(const char *filename);
-    float getRefractionIndex();
+    double getRefractionIndex();
     Vector3f getDiffuseColor();
     Vector3f getSpecularColor();
 
@@ -33,9 +33,9 @@ public:
 
 protected:
     Vector3f diffuseColor;
-    float refractionIndex;
+    double refractionIndex;
     Vector3f specularColor;
-    float shininess; // no use
+    double shininess; // no use
     Texture t;
     Noise noise;
 };

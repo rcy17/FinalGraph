@@ -6,11 +6,11 @@
 #include <vector>
 
 ///@brief two intervals intersect
-bool intersect(float *a, float *b)
+bool intersect(double *a, double *b)
 {
 	if (a[0] > b[1])
 	{
-		float *tmp = a;
+		double *tmp = a;
 		a = b;
 		b = tmp;
 	}
@@ -22,8 +22,8 @@ bool boxOverlap(Box *a, Box *b)
 {
 	for (int dim = 0; dim < 3; dim++)
 	{
-		float ia[2] = {a->mn[dim], a->mx[dim]};
-		float ib[2] = {b->mn[dim], b->mx[dim]};
+		double ia[2] = {a->mn[dim], a->mx[dim]};
+		double ib[2] = {b->mn[dim], b->mx[dim]};
 		bool inter = intersect(ia, ib);
 		if (!inter)
 		{
@@ -148,7 +148,7 @@ void Octree::build(const Mesh &m)
 	buildNode(root, box, trigs, m, 0);
 }
 
-int first_node(float tx0, float ty0, float tz0, float txm, float tym, float tzm)
+int first_node(double tx0, double ty0, double tz0, double txm, double tym, double tzm)
 {
 	char bits = 0;
 	///find max x0 y0 z0
@@ -193,7 +193,7 @@ int first_node(float tx0, float ty0, float tz0, float txm, float tym, float tzm)
 	return bits;
 }
 
-int new_node(float txm, int x, float tym, int y, float tzm, int z)
+int new_node(double txm, int x, double tym, int y, double tzm, int z)
 {
 	if (txm < tym)
 	{
@@ -217,10 +217,10 @@ bool IntersectRecorder::operator()(int idx)
 	result |= m->intersectTrig(idx, ray, hit, t_min);
 }
 
-void Octree::proc_subtree(float tx0, float ty0, float tz0, float tx1, float ty1, float tz1,
+void Octree::proc_subtree(double tx0, double ty0, double tz0, double tx1, double ty1, double tz1,
 						  OctNode *node, unsigned char aa, IntersectRecorder &f)
 {
-	float txm, tym, tzm;
+	double txm, tym, tzm;
 	int currNode;
 	if (tx1 < 0 || ty1 < 0 || tz1 < 0)
 	{
@@ -322,16 +322,16 @@ void Octree::intersect(const Ray &ray, IntersectRecorder &f)
 		aa |= 1;
 	}
 
-	float divx = 1 / rd[0]; // IEEE stability fix
-	float divy = 1 / rd[1];
-	float divz = 1 / rd[2];
+	double divx = 1 / rd[0]; // IEEE stability fix
+	double divy = 1 / rd[1];
+	double divz = 1 / rd[2];
 
-	float tx0 = (box.mn[0] - ro[0]) * divx;
-	float tx1 = (box.mx[0] - ro[0]) * divx;
-	float ty0 = (box.mn[1] - ro[1]) * divy;
-	float ty1 = (box.mx[1] - ro[1]) * divy;
-	float tz0 = (box.mn[2] - ro[2]) * divz;
-	float tz1 = (box.mx[2] - ro[2]) * divz;
+	double tx0 = (box.mn[0] - ro[0]) * divx;
+	double tx1 = (box.mx[0] - ro[0]) * divx;
+	double ty0 = (box.mn[1] - ro[1]) * divy;
+	double ty1 = (box.mx[1] - ro[1]) * divy;
+	double tz0 = (box.mn[2] - ro[2]) * divz;
+	double tz1 = (box.mx[2] - ro[2]) * divz;
 
 	if (max(max(tx0, ty0), tz0) <= min(min(tx1, ty1), tz1))
 	{

@@ -11,7 +11,7 @@ public:
   void load(const char * filename);
   void operator()(int x, int y,  unsigned char * color);
   ///@param x assumed to be between 0 and 1
-  Vector3f operator()(float x, float y);
+  Vector3f operator()(double x, double y);
   ~Texture();
 private:
   bitmap_image * bimg;

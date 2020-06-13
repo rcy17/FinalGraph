@@ -22,7 +22,7 @@ bool Texture::valid()
 
 ///@param x assumed to be between 0 and 1
 Vector3f
-Texture::operator()(float x, float y)
+Texture::operator()(double x, double y)
 {
     Vector3f color;
     int ix, iy;
@@ -31,8 +31,8 @@ Texture::operator()(float x, float y)
     ix = (int)x;
     iy = (int)y;
     unsigned char pixels[4][3];
-    float alpha = x - ix;
-    float beta = y - iy;
+    double alpha = x - ix;
+    double beta = y - iy;
     operator()(ix, iy, pixels[0]);
     operator()(ix + 1, iy, pixels[1]);
     operator()(ix, iy + 1, pixels[2]);

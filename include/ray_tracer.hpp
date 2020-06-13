@@ -6,7 +6,7 @@
 #include "scene_parser.hpp"
 #include "ray.hpp"
 #include "hit.hpp"
-#define EPSILON 0.001f
+#define EPSILON 0.00001f
 
 class SceneParser;
 
@@ -17,11 +17,11 @@ inline Vector3f mirrorDirection(const Vector3f &normal, const Vector3f &incoming
 }
 
 inline bool transmittedDirection(const Vector3f &normal, const Vector3f &incoming,
-                                 float index_n, float index_nt,
+                                 double index_n, double index_nt,
                                  Vector3f &transmitted)
 {
     auto dn = Vector3f::dot(incoming, normal);
-    float coff = dn > 0 ? -1 : 1;
+    double coff = dn > 0 ? -1 : 1;
     auto delta = 1 - index_n * index_n * (1 - dn * dn) / (index_nt * index_nt);
     if (delta < 0)
         return false;
@@ -42,7 +42,7 @@ public:
 
     ~RayTracer() = default;
 
-    Vector3f traceRay(const Ray &ray, float t_min, int bounces, Hit &hit, float currentIndex = 1.f, bool debug = false) const
+    Vector3f traceRay(const Ray &ray, double t_min, int bounces, Hit &hit, double currentIndex = 1.f, bool debug = false) const
     {
         hit = Hit(FLT_MAX, NULL, Vector3f(0, 0, 0));
         Vector3f finalColor = Vector3f::ZERO;
@@ -70,7 +70,7 @@ public:
             {
                 Light *light = scene->getLight(li);
                 Vector3f lightColor;
-                float distance;
+                double distance;
                 light->getIllumination(p, direction, lightColor, distance);
                 if (use_shadow)
                 {
@@ -94,11 +94,11 @@ public:
 
             if (bounces < max_bounces)
             {
-                float reflectivity = 1.f;
+                double reflectivity = 1.f;
                 if (use_refract && material->getRefractionIndex() > 0)
                 {
-                    float n = currentIndex;
-                    float nt = material->getRefractionIndex();
+                    double n = currentIndex;
+                    double nt = material->getRefractionIndex();
                     if (nt == n)
                         nt = 1.f;
 
@@ -112,7 +112,7 @@ public:
                         reflectivity = R;
                         if (debug)
                         {
-                            printf("tag: %lx, bounces: %d, R: %f, transmitted direction: ", &c, bounces, R);
+                            printf("tag: %lx, bounces: %d, R: %lf, transmitted direction: ", &c, bounces, R);
                             direction.print();
                         }
                         finalColor += (1 - R) * traceRay(_ray, EPSILON, bounces + 1, _hit, nt, debug);

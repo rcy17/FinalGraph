@@ -1,6 +1,6 @@
 #include "material.hpp"
-Material::Material(const Vector3f &d_color, const Vector3f &s_color, float s,
-				   float r) : diffuseColor(d_color), refractionIndex(r), shininess(s), specularColor(s_color)
+Material::Material(const Vector3f &d_color, const Vector3f &s_color, double s,
+				   double r) : diffuseColor(d_color), refractionIndex(r), shininess(s), specularColor(s_color)
 {
 }
 
@@ -39,16 +39,16 @@ Vector3f Material::pointwiseDot(const Vector3f &v1, const Vector3f &v2)
 	return out;
 }
 
-float Material::clampedDot(const Vector3f &L, const Vector3f &N) const
+double Material::clampedDot(const Vector3f &L, const Vector3f &N) const
 {
-	float d = Vector3f::dot(L, N);
+	double d = Vector3f::dot(L, N);
 	return (d > 0) ? d : 0;
 }
 void Material::loadTexture(const char *filename)
 {
 	t.load(filename);
 }
-float Material::getRefractionIndex()
+double Material::getRefractionIndex()
 {
 	return refractionIndex;
 }

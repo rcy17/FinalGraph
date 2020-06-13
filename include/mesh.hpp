@@ -29,8 +29,8 @@ public:
     std::vector<Vector3f> n;
     std::vector<Vector2f> texCoord;
 
-    virtual bool intersect(const Ray &r, Hit &h, float t_min) override;
-    bool intersectTrig(int idx, const Ray &r, Hit &h, float t_min);
+    virtual bool intersect(const Ray &r, Hit &h, double t_min) override;
+    bool intersectTrig(int idx, const Ray &r, Hit &h, double t_min);
 
 private:
     void computeNorm();

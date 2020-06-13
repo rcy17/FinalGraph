@@ -8,7 +8,7 @@ public:
 	Noise(int _octaves ,
 		const Vector3f & color1 = Vector3f::ZERO,
 		const Vector3f & color2=Vector3f(1,1,1),
-		float freq=1, float amp=1);
+		double freq=1, double amp=1);
 	Vector3f getColor(const Vector3f & pos);
 	bool valid();
 
@@ -16,8 +16,8 @@ public:
 
 	Vector3f color[2];
 	int octaves;
-	float frequency;
-	float amplitude;
+	double frequency;
+	double amplitude;
 	bool init;
 };
 

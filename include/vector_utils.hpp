@@ -30,7 +30,7 @@ public:
         return out;
     }
 
-    static Vector3f clamp(const Vector3f &data, float low = 0, float high = 1)
+    static Vector3f clamp(const Vector3f &data, double low = 0, double high = 1)
     {
         Vector3f out = data;
         for (int i = 0; i < 3; ++i)

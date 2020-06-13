@@ -42,8 +42,8 @@ public:
         double answer = 0;
         for (int i = 0; i < octaves; i++)
         {
-            float tmp = pow(2.0f,i);
-            answer += noise(tmp*pt[0],tmp*pt[1],tmp*pt[2]) / float(tmp);
+            double tmp = pow(2.0f,i);
+            answer += noise(tmp*pt[0],tmp*pt[1],tmp*pt[2]) / double(tmp);
         }
         return answer;
     }

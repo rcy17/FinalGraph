@@ -100,7 +100,7 @@ private:
 
     Vector3f readVector3f();
     Vector2f readVector2f();
-    float readFloat();
+    double readFloat();
     int readInt();
 
     FILE *file;

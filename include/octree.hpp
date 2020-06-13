@@ -12,8 +12,8 @@ struct Box
 	Box(const Vector3f &a, const Vector3f &b) : mn(a), mx(b)
 	{
 	}
-	Box(float mnx, float mny, float mnz,
-		float mxx, float mxy, float mxz) : mn(Vector3f(mnx, mny, mnz)),
+	Box(double mnx, double mny, double mnz,
+		double mxx, double mxy, double mxz) : mn(Vector3f(mnx, mny, mnz)),
 										   mx(Vector3f(mxx, mxy, mxz))
 	{
 	}
@@ -38,9 +38,9 @@ struct IntersectRecorder
 	Mesh *m;
 	const Ray &ray;
 	Hit &hit;
-	float t_min;
+	double t_min;
 	bool result;
-	IntersectRecorder(Mesh *m, const Ray &ray, Hit &hit, float t_min)
+	IntersectRecorder(Mesh *m, const Ray &ray, Hit &hit, double t_min)
 		: m(m), ray(ray), hit(hit), t_min(t_min), result(false)
 	{
 	}
@@ -65,7 +65,7 @@ struct Octree
 				   const Mesh &m, int level);
 
 	///@brief indexing
-	void proc_subtree(float tx0, float ty0, float tz0, float tx1, float ty1, float tz1,
+	void proc_subtree(double tx0, double ty0, double tz0, double tx1, double ty1, double tz1,
 					  OctNode *node, unsigned char aa, IntersectRecorder &f);
 
 	void intersect(const Ray &ray, IntersectRecorder &f);

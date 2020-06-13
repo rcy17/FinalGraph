@@ -54,10 +54,10 @@ public:
                   {
                         i++;
                         assert(i < argc);
-                        depth_min = (float)atof(argv[i]);
+                        depth_min = (double)atof(argv[i]);
                         i++;
                         assert(i < argc);
-                        depth_max = (float)atof(argv[i]);
+                        depth_max = (double)atof(argv[i]);
                         i++;
                         assert(i < argc);
                         depth_file = argv[i];
@@ -133,8 +133,8 @@ public:
       int stats;
 
       // rendering options
-      float depth_min;
-      float depth_max;
+      double depth_min;
+      double depth_max;
       int bounces;
       int shadows;
       int refractions;

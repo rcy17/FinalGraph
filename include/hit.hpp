@@ -18,7 +18,7 @@ public:
         hasTex = false;
     }
 
-    Hit(float _t, Material *m, const Vector3f &n)
+    Hit(double _t, Material *m, const Vector3f &n)
     {
         t = _t;
         material = m;
@@ -37,7 +37,7 @@ public:
     // destructor
     ~Hit() = default;
 
-    float getT() const
+    double getT() const
     {
         return t;
     }
@@ -52,7 +52,7 @@ public:
         return normal;
     }
 
-    void set(float _t, Material *m, const Vector3f &n)
+    void set(double _t, Material *m, const Vector3f &n)
     {
         t = _t;
         material = m;
@@ -63,7 +63,7 @@ public:
     Vector2f texCoord;
 
 private:
-    float t;
+    double t;
     Material *material;
     Vector3f normal;
 };
