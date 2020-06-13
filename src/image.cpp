@@ -328,3 +328,52 @@ void Image::SaveImage(const char *filename)
         SaveTGA(filename);
     }
 }
+
+void Image::GaussianBlur()
+{
+    Image temp(width, height);
+    const double k[] = {0.1201, 0.2339, 0.2931, 0.2339, 0.1201};
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = -2; x < width - 2; x++)
+        {
+            Vector3f color;
+            for (int i = 0; i < 5; i++)
+            {
+                color += k[i] * GetClampPixel(x + i, y);
+            }
+            temp.SetPixel(x + 2, y, color);
+        }
+    }
+
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = -2; y < height - 2; y++)
+        {
+            Vector3f color;
+            for (int i = 0; i < 5; i++)
+            {
+                color += k[i] * temp.GetClampPixel(x, y + 2);
+            }
+            SetPixel(x, y + 2, color);
+        }
+    }
+}
+
+void Image::DownSampling(Image *result)
+{
+#pragma omp parallel for schedule(auto)
+    for (int y = 0; y < result->Height(); y++)
+    {
+        for (int x = 0; x < result->Width(); x++)
+        {
+            Vector3f color;
+            for (int i = 0; i < 9; i++)
+            {
+                color += GetPixel(x * 3 + i % 3, y * 3 + i / 3);
+            }
+            color = color / 9;
+            result->SetPixel(x, y, color);
+        }
+    }
+}

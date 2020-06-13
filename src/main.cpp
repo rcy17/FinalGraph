@@ -52,34 +52,31 @@ int main(int argc, char *argv[])
     auto camera = scene.getCamera();
     if (parser.set_size)
         camera->setSize(parser.width, parser.height);
+    if (parser.jitter)
+        camera->setSize(camera->getWidth() * 3, camera->getHeight() * 3);
     Image image(camera->getWidth(), camera->getHeight());
     RayTracer tracer(&scene, parser.bounces, parser.shadows, parser.refractions);
     unsigned int rand_seed = 0;
 
 #pragma omp parallel for schedule(dynamic, 1)
-    for (int y = 0; y < camera->getHeight(); y++)
+    for (int y = 0; y < image.Height(); y++)
     {
-        fprintf(stderr, "\rprocessing %5d/%-5d", y, camera->getWidth());
-        for (int x = 0; x < camera->getWidth(); x++)
+        fprintf(stderr, "\rprocessing %5d/%-5d", y, image.Width());
+        for (int x = 0; x < image.Width(); x++)
         {
             bool debug = false;
-            if (y == 48 && x == 48)
+            if (y == 48 && x == 48 && 0)
             {
                 debug = true;
             }
             Vector3f color;
             if (parser.jitter)
             {
-                for (int i = 0; i < 9; i++)
-                {
-
-                    auto dx = double(rand_r(&rand_seed)) / __INT_MAX__;
-                    auto dy = double(rand_r(&rand_seed)) / __INT_MAX__;
-                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, y - 0.5 + dy));
-                    Hit hit;
-                    color += tracer.traceRay(camRay, 0.f, 0, hit, 1.f, debug);
-                }
-                color = color / 9;
+                auto dx = double(rand_r(&rand_seed)) / __INT_MAX__;
+                auto dy = double(rand_r(&rand_seed)) / __INT_MAX__;
+                Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, y - 0.5 + dy));
+                Hit hit;
+                color = tracer.traceRay(camRay, 0.f, 0, hit, 1.f, debug);
             }
             else
             {
@@ -90,7 +87,17 @@ int main(int argc, char *argv[])
             image.SetPixel(x, y, color);
         }
     }
-    fprintf(stderr, "\rprocessing %5d/%-5d\n", camera->getWidth(), camera->getWidth());
-    image.SaveImage(parser.output_file);
+    fprintf(stderr, "\rprocessing %5d/%-5d\n", image.Width(), image.Width());
+    if (parser.filter)
+    {
+        image.GaussianBlur();
+        Image result(image.Width() / 3, image.Height() / 3);
+        image.DownSampling(&result);
+        result.SaveImage(parser.output_file);
+    }
+    else
+    {
+        image.SaveImage(parser.output_file);
+    }
     return 0;
 }
