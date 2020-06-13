@@ -35,9 +35,9 @@ Materials {
     numMaterials 2
     PhongMaterial {
         diffuseColor 0.25 0.25 0.25
-	specularColor 0.25 0.25 0.25
-	shininess 32
-	refractionIndex 2.413
+	    specularColor 0.25 0.25 0.25
+	    shininess 32
+	    refractionIndex 2.413
     }
     PhongMaterial {
         diffuseColor 1 1 1

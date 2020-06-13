@@ -1,0 +1,81 @@
+
+PerspectiveCamera {
+    center 0 -0.5 10
+    direction 0 0 -1
+    up 0 1 0
+    angle 30
+    width 400
+    height 400
+}
+
+Lights {
+    numLights 2
+    PointLight {
+        position 0 1.5 0
+        color 0.8 0.8 0.8 
+    }
+    DirectionalLight {
+        direction 0 0 -1
+        color 0.1 0.1 0.1 
+    }
+}
+
+Background {
+    color 0 0 0 
+}
+
+Materials {
+    numMaterials 4
+    Material { diffuseColor 0.1 0.1 0.1 
+      specularColor 0.2 0.2 0.2
+      shininess 20
+      refractionIndex 1.5
+    }
+    Material { diffuseColor 0 1 0
+      specularColor 0.5 0.5 0.5
+ }
+    Material { diffuseColor 0 0 1
+      specularColor 0.5 0.5 0.5
+ }
+    Material { diffuseColor 1 1 1 
+	specularColor 0.5 0.5 0.5
+	shininess 20
+}
+}
+
+Group {
+    numObjects 7
+    MaterialIndex 0
+    Sphere {
+	center 0 0 0
+        radius 1 
+    }
+    MaterialIndex 1
+    Sphere {
+	center 1 1 1 
+        radius 0.5
+    }
+    Sphere {
+	center -1 -1 1 
+        radius 0.5
+    }
+    MaterialIndex 2
+    Sphere {
+	center -1 1 -1 
+        radius 0.5
+    }
+    Sphere {
+	center 0 6 -5 
+        radius  3
+    }
+    MaterialIndex 3
+    Plane {
+	normal 0 1 0
+        offset -2
+    }
+    MaterialIndex 3
+    Plane {
+	normal 0 0 1
+        offset -10
+    }
+}

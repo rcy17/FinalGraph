@@ -35,7 +35,7 @@ protected:
     Vector3f diffuseColor;
     float refractionIndex;
     Vector3f specularColor;
-    float shininess;
+    float shininess; // no use
     Texture t;
     Noise noise;
 };

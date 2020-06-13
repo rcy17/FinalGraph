@@ -9,14 +9,10 @@ PerspectiveCamera {
 }
 
 Lights {
-    numLights 2
+    numLights 1
     DirectionalLight {
-        direction 0.2 -1 -0.4
+        direction 0 -1 0
 	color 0.7 0.7 0.7
-    }
-    DirectionalLight {
-        direction -7 -5 -5
-	color 0.3 0.3 0.3
     }
 }
 
@@ -28,7 +24,7 @@ Materials {
     numMaterials 1
     PhongMaterial {	
         diffuseColor 0.79 0.66 0.44
-	specularColor 1 1 1 
+	specularColor 0.79 0.66 0.44
 	shininess 20
 
     }

@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
     SceneParser parser(argv[1]);
     const auto camera = parser.getCamera();
     Image image(camera->getWidth(), camera->getHeight());
-    RayTracer tracer(&parser, 0, true, 0, 0);
+    RayTracer tracer(&parser, 16, true, true, true);
+
 #pragma omp parallel for schedule(dynamic, 1)
     for (int x = 0; x < camera->getWidth(); x++)
     {
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
         {
             Ray camRay = camera->generateRay(Vector2f(x, y));
             Hit hit;
-            auto color = tracer.traceRay(camRay, FLT_MIN, 0, hit);
+            auto color = tracer.traceRay(camRay, 0.f, 0, hit);
             image.SetPixel(x, y, color);
         }
     }

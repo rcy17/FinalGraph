@@ -36,10 +36,10 @@ struct OctNode
 struct IntersectRecorder
 {
 	Mesh *m;
-	bool result;
 	const Ray &ray;
 	Hit &hit;
 	float t_min;
+	bool result;
 	IntersectRecorder(Mesh *m, const Ray &ray, Hit &hit, float t_min)
 		: m(m), ray(ray), hit(hit), t_min(t_min), result(false)
 	{
