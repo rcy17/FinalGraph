@@ -125,6 +125,13 @@ public:
             }
             if (type == RT)
                   spp = 1;
+
+            if ((offset || size))
+            {
+                  assert(!filter && "Filter is forbidden when you're using distributed calculation!\n");
+                  if (jitter)
+                        offset *= 3, size *= 3;
+            }
       }
 
       void DefaultValues()

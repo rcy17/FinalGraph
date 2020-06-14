@@ -51,11 +51,16 @@ int main(int argc, char *argv[])
 
     SceneParser scene(parser.input_file);
     auto camera = scene.getCamera();
+
     if (parser.set_size)
         camera->setSize(parser.width, parser.height);
     if (parser.jitter)
         camera->setSize(camera->getWidth() * 3, camera->getHeight() * 3);
-    Image image(camera->getWidth(), camera->getHeight());
+
+    int offset = parser.offset;
+    int y_range = (parser.size ? parser.size : camera->getHeight() - offset);
+    Image image(camera->getWidth(), y_range);
+
     Tracer *tracer;
     switch (parser.type)
     {
@@ -67,41 +72,39 @@ int main(int argc, char *argv[])
         break;
     }
 
-    int y_start = parser.offset;
-    int y_stop = y_start + (parser.offset ? parser.offset : image.Height() - y_start);
-
 #pragma omp parallel for schedule(dynamic, 1)
-    for (int y = y_start; y < y_stop; y++)
+    for (int y = 0; y < y_range; y++)
     {
-        fprintf(stderr, "\rprocessing %5d/%-5d", y, image.Width());
+        fprintf(stderr, "\rprocessing %5d/%-5d", y, y_range);
         for (int x = 0; x < image.Width(); x++)
         {
+            int _y = y + offset;
             bool debug = false;
-            if (y == 32 && x == 17 && 0)
+            if (_y == 32 && x == 17 && 0)
             {
                 debug = true;
             }
             Vector3f color;
-            unsigned short seed[3] = {y, y * x, static_cast<unsigned short>(y * x * y)};
+            unsigned short seed[3] = {_y, _y * x, static_cast<unsigned short>(_y * x * _y)};
             for (int i = 0; i < parser.spp; i++)
             {
                 if (parser.jitter)
                 {
                     auto dx = erand48(seed);
                     auto dy = erand48(seed);
-                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, y - 0.5 + dy));
+                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, _y - 0.5 + dy));
                     color += tracer->traceRay(camRay, EPSILON, 0, seed, 1.f, debug);
                 }
                 else
                 {
-                    Ray camRay = camera->generateRay(Vector2f(x, y));
+                    Ray camRay = camera->generateRay(Vector2f(x, _y));
                     color += tracer->traceRay(camRay, EPSILON, 0, seed, 1.f, debug);
                 }
             }
             image.SetPixel(x, y, VectorUtils::clamp(color / parser.spp));
         }
     }
-    fprintf(stderr, "\rprocessing %5d/%-5d\n", image.Width(), image.Width());
+    fprintf(stderr, "\rprocessing %5d/%-5d\n", y_range, y_range);
     if (parser.filter)
     {
         image.GaussianBlur();
