@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
                     color += tracer->traceRay(camRay, EPSILON, 0, seed, 1.f, debug);
                 }
             }
-            image.SetPixel(x, y, color / parser.spp);
+            image.SetPixel(x, y,VectorUtils::clamp(color / parser.spp));
         }
     }
     fprintf(stderr, "\rprocessing %5d/%-5d\n", image.Width(), image.Width());

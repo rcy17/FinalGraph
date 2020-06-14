@@ -100,6 +100,11 @@ public:
                         spp = atoi(argv[i]);
                   }
 
+                  else if (!strcmp(argv[i], "-gamma"))
+                  {
+                        gamma = 1;
+                  }
+
                   else
                   {
                         printf("Unknown command line argument %d: '%s'\n", i, argv[i]);
@@ -136,6 +141,9 @@ public:
 
             // pt
             spp = 100;
+
+            // gamma correct
+            gamma = 0;
       }
 
       // ==============
