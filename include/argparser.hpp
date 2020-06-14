@@ -174,6 +174,9 @@ public:
 
       // Samples Per Pixel
       int spp;
+
+      // Gamma Correction
+      int gamma;
 };
 
 #endif // ARG_PARSER_H

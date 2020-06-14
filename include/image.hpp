@@ -59,11 +59,11 @@ public:
 
     static Image *LoadTGA(const char *filename);
 
-    void SaveTGA(const char *filename) const;
+    void SaveTGA(const char *filename, bool gamma = false) const;
 
-    int SaveBMP(const char *filename);
+    int SaveBMP(const char *filename, bool gamma = false);
 
-    void SaveImage(const char *filename);
+    void SaveImage(const char *filename, bool gamma = false);
 
     void GaussianBlur();
 

@@ -37,10 +37,15 @@ unsigned char ClampColorComponent(double c)
     return (unsigned char)tmp;
 }
 
+unsigned char GammaCorrect(double x)
+{
+    return int(.5 + 255 * pow(x < 0 ? 0 : x > 1 ? 1 : x, 1 / 2.2));
+}
+
 // Save and Load data type 2 Targa (.tga) files
 // (uncompressed, unmapped RGB images)
 
-void Image::SaveTGA(const char *filename) const
+void Image::SaveTGA(const char *filename, bool gamma) const
 {
     assert(filename != NULL);
     // must end in .tga
@@ -242,7 +247,7 @@ struct BMPHeader
     int biClrImportant;  /* Number of important colors.  If 0, all colors 
                              are important */
 };
-int Image::SaveBMP(const char *filename)
+int Image::SaveBMP(const char *filename, bool gamma)
 {
     int i, j, ipos;
     int bytesPerLine;
@@ -298,14 +303,16 @@ int Image::SaveBMP(const char *filename)
         return (0);
     }
 
+    auto func = gamma ? &GammaCorrect : &ClampColorComponent;
+
     for (i = 0; i < height; i++)
     {
         for (j = 0; j < width; j++)
         {
             ipos = (width * i + j);
-            line[3 * j] = ClampColorComponent(rgb[ipos][2]);
-            line[3 * j + 1] = ClampColorComponent(rgb[ipos][1]);
-            line[3 * j + 2] = ClampColorComponent(rgb[ipos][0]);
+            line[3 * j] = func(rgb[ipos][2]);
+            line[3 * j + 1] = func(rgb[ipos][1]);
+            line[3 * j + 2] = func(rgb[ipos][0]);
         }
         fwrite(line, bytesPerLine, 1, file);
     }
@@ -316,16 +323,16 @@ int Image::SaveBMP(const char *filename)
     return (1);
 }
 
-void Image::SaveImage(const char *filename)
+void Image::SaveImage(const char *filename, bool gamma)
 {
     int len = strlen(filename);
     if (strcmp(".bmp", filename + len - 4) == 0)
     {
-        SaveBMP(filename);
+        SaveBMP(filename, gamma);
     }
     else
     {
-        SaveTGA(filename);
+        SaveTGA(filename, gamma);
     }
 }
 

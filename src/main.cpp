@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
                     color += tracer->traceRay(camRay, EPSILON, 0, seed, 1.f, debug);
                 }
             }
-            image.SetPixel(x, y,VectorUtils::clamp(color / parser.spp));
+            image.SetPixel(x, y, VectorUtils::clamp(color / parser.spp));
         }
     }
     fprintf(stderr, "\rprocessing %5d/%-5d\n", image.Width(), image.Width());
@@ -104,11 +104,11 @@ int main(int argc, char *argv[])
         image.GaussianBlur();
         Image result(image.Width() / 3, image.Height() / 3);
         image.DownSampling(&result);
-        result.SaveImage(parser.output_file);
+        result.SaveImage(parser.output_file, parser.gamma);
     }
     else
     {
-        image.SaveImage(parser.output_file);
+        image.SaveImage(parser.output_file, parser.gamma);
     }
     return 0;
 }
