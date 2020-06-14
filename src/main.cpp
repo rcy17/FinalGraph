@@ -87,12 +87,12 @@ int main(int argc, char *argv[])
                     auto dx = erand48(seed);
                     auto dy = erand48(seed);
                     Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, y - 0.5 + dy));
-                    color += tracer->traceRay(camRay, 0.f, 0, seed, 1.f, debug);
+                    color += tracer->traceRay(camRay, EPSILON, 0, seed, 1.f, debug);
                 }
                 else
                 {
                     Ray camRay = camera->generateRay(Vector2f(x, y));
-                    color += tracer->traceRay(camRay, 0.f, 0, seed, 1.f, debug);
+                    color += tracer->traceRay(camRay, EPSILON, 0, seed, 1.f, debug);
                 }
             }
             image.SetPixel(x, y, color / parser.spp);
