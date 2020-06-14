@@ -73,6 +73,7 @@ void Image::SaveTGA(const char *filename, bool gamma) const
             WriteByte(file, 0);
     }
     // the data
+    auto func = gamma ? &GammaCorrect : &ClampColorComponent;
     // flip y so that (0,0) is bottom left corner
     for (int y = height - 1; y >= 0; y--)
     {
@@ -80,9 +81,9 @@ void Image::SaveTGA(const char *filename, bool gamma) const
         {
             Vector3f v = GetPixel(x, y);
             // note reversed order: b, g, r
-            WriteByte(file, ClampColorComponent(v[2]));
-            WriteByte(file, ClampColorComponent(v[1]));
-            WriteByte(file, ClampColorComponent(v[0]));
+            WriteByte(file, func(v[2]));
+            WriteByte(file, func(v[1]));
+            WriteByte(file, func(v[0]));
         }
     }
     fclose(file);
@@ -156,15 +157,16 @@ void Image::SavePPM(const char *filename) const
     fprintf(file, "%d %d\n", width, height);
     fprintf(file, "255\n");
     // the data
+    auto func = gamma ? &GammaCorrect : &ClampColorComponent;
     // flip y so that (0,0) is bottom left corner
     for (int y = height - 1; y >= 0; y--)
     {
         for (int x = 0; x < width; x++)
         {
             Vector3f v = GetPixel(x, y);
-            fputc(ClampColorComponent(v[0]), file);
-            fputc(ClampColorComponent(v[1]), file);
-            fputc(ClampColorComponent(v[2]), file);
+            fputc(func(v[0]), file);
+            fputc(func(v[1]), file);
+            fputc(func(v[2]), file);
         }
     }
     fclose(file);
