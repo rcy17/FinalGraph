@@ -43,7 +43,7 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
         {
             int _y = y + offset;
             bool debug = false;
-            if (_y == 72 && x == 72 && 1)
+            if (_y == 61 && x == 1 && 1)
             {
                 debug = true;
             }
@@ -57,12 +57,12 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
                     auto dy = erand48(seed);
                     double distance;
                     Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, _y - 0.5 + dy));
-                    color += tracer->traceRay(camRay, 150, 0, seed, 1.f, debug);
+                    color += tracer->traceRay(camRay, 140, 0, seed, 1.f, debug);
                 }
                 else
                 {
                     Ray camRay = camera->generateRay(Vector2f(x, _y));
-                    color += tracer->traceRay(camRay, 150, 0, seed, 1.f, debug);
+                    color += tracer->traceRay(camRay, 140, 0, seed, 1.f, debug);
                 }
             }
             image.SetPixel(x, y, VectorUtils::clamp(color / parser.spp));
