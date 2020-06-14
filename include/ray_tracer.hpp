@@ -2,9 +2,12 @@
 #define RAY_TRACER_H
 
 #include "tracer.hpp"
-#define EPSILON 0.00001f
 
-class RayTracer : Tracer
+#ifndef EPSILON
+#define EPSILON 0.00001f
+#endif
+
+class RayTracer : public Tracer
 {
 public:
     RayTracer() = delete;
@@ -16,9 +19,9 @@ public:
 
     ~RayTracer() = default;
 
-    Vector3f traceRay(const Ray &ray, double t_min, int bounces, Hit &hit, double currentIndex = 1.f, bool debug = false) const
+    Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, double currentIndex = 1.f, bool debug = false) const
     {
-        hit = Hit(FLT_MAX, NULL, Vector3f(0, 0, 0));
+        Hit hit(FLT_MAX, NULL, Vector3f(0, 0, 0));
         Vector3f finalColor = Vector3f::ZERO;
         const auto group = scene->getGroup();
 
@@ -78,7 +81,6 @@ public:
 
                     if (transmittedDirection(normal, incoming, n, nt, direction))
                     {
-                        Hit _hit(FLT_MAX, NULL, Vector3f(0));
                         Ray _ray(p, direction * ray.getDirectionLength());
                         auto R0 = (nt - n) * (nt - n) / (nt + n) / (nt + n);
                         auto c = 1 - fabs(Vector3f::dot(n > nt ? direction : incoming, normal));
@@ -89,7 +91,7 @@ public:
                             printf("tag: %lx, bounces: %d, R: %lf, transmitted direction: ", &c, bounces, R);
                             direction.print();
                         }
-                        finalColor += (1 - R) * traceRay(_ray, EPSILON, bounces + 1, _hit, nt, debug);
+                        finalColor += (1 - R) * traceRay(_ray, EPSILON, bounces + 1, seed, nt, debug);
                         if (debug)
                         {
                             printf("tag: %lx, bounces: %d, after transmitted:", &c, bounces);
@@ -100,14 +102,14 @@ public:
                 if (material->getSpecularColor() != Vector3f::ZERO)
                 {
                     direction = mirrorDirection(normal, incoming);
-                    Hit _hit(FLT_MAX, NULL, Vector3f(0));
                     Ray _ray(p, direction * ray.getDirectionLength());
                     if (debug)
                     {
                         printf("bounces: %d, reflect direction: ", bounces);
                         direction.print();
                     }
-                    finalColor += reflectivity * material->getSpecularColor() * traceRay(_ray, EPSILON, bounces + 1, _hit, currentIndex, debug);
+                    finalColor += reflectivity * material->getSpecularColor() *
+                                  traceRay(_ray, EPSILON, bounces + 1, seed, currentIndex, debug);
                     if (debug)
                     {
                         printf("bounces: %d, after reflect:", bounces);

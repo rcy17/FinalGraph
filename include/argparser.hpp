@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include "tracer.hpp"
 
 class ArgParser
 {
@@ -86,12 +87,27 @@ public:
                   {
                         filter = 1;
                   }
+
+                  // path tracer
+                  else if (strcmp(argv[i], "-pt") == 0)
+                  {
+                        type = PT;
+                  }
+                  else if (!strcmp(argv[i], "-spp"))
+                  {
+                        i++;
+                        assert(i < argc);
+                        spp = atoi(argv[i]);
+                  }
+
                   else
                   {
                         printf("Unknown command line argument %d: '%s'\n", i, argv[i]);
                         assert(0);
                   }
             }
+            if (type == RT)
+                  spp = 1;
       }
 
       void DefaultValues()
@@ -112,10 +128,14 @@ public:
             bounces = 0;
             shadows = 0;
             refractions = 0;
+            type = RT;
 
             // sampling
             jitter = 0;
             filter = 0;
+
+            // pt
+            spp = 100;
       }
 
       // ==============
@@ -138,10 +158,14 @@ public:
       int bounces;
       int shadows;
       int refractions;
+      TraceType type;
 
       // supersampling
       int jitter;
       int filter;
+
+      // Samples Per Pixel
+      int spp;
 };
 
 #endif // ARG_PARSER_H

@@ -19,7 +19,6 @@ SET(PA5_SOURCES
         src/cube_map.cpp
         src/image.cpp
         src/main.cpp
-        src/material.cpp
         src/mesh.cpp
         src/noise.cpp
         src/octree.cpp

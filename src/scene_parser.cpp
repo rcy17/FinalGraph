@@ -305,7 +305,7 @@ Material *SceneParser::parseMaterial()
     char token[MAX_PARSER_TOKEN_LENGTH];
     char filename[MAX_PARSER_TOKEN_LENGTH];
     filename[0] = 0;
-    Vector3f diffuseColor(1, 1, 1), specularColor(0, 0, 0);
+    Vector3f diffuseColor(1, 1, 1), specularColor(0, 0, 0), lightColor(0, 0, 0);
     double shininess = 0;
     double refractionIndex = 0;
     getToken(token);
@@ -321,6 +321,10 @@ Material *SceneParser::parseMaterial()
         else if (strcmp(token, "specularColor") == 0)
         {
             specularColor = readVector3f();
+        }
+        else if (strcmp(token, "lightColor") == 0)
+        {
+            lightColor = readVector3f();
         }
         else if (strcmp(token, "shininess") == 0)
         {
@@ -349,7 +353,7 @@ Material *SceneParser::parseMaterial()
             break;
         }
     }
-    Material *answer = new Material(diffuseColor, specularColor, shininess, refractionIndex);
+    Material *answer = new Material(diffuseColor, specularColor, lightColor, refractionIndex);
     if (filename[0] != 0)
     {
         answer->loadTexture(filename);
@@ -361,6 +365,7 @@ Material *SceneParser::parseMaterial()
     }
     return answer;
 }
+
 Noise *SceneParser::parseNoise()
 {
     char token[MAX_PARSER_TOKEN_LENGTH];

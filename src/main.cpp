@@ -13,6 +13,7 @@
 #include "light.hpp"
 #include "vector_utils.hpp"
 #include "ray_tracer.hpp"
+#include "path_tracer.hpp"
 
 #include <string>
 
@@ -55,8 +56,16 @@ int main(int argc, char *argv[])
     if (parser.jitter)
         camera->setSize(camera->getWidth() * 3, camera->getHeight() * 3);
     Image image(camera->getWidth(), camera->getHeight());
-    RayTracer tracer(&scene, parser.bounces, parser.shadows, parser.refractions);
-    unsigned int rand_seed = 0;
+    Tracer *tracer;
+    switch (parser.type)
+    {
+    case RT:
+        tracer = new RayTracer(&scene, parser.bounces, parser.shadows, parser.refractions);
+        break;
+    case PT:
+        tracer = new PathTracer(&scene, parser.bounces, parser.shadows, parser.refractions);
+        break;
+    }
 
 #pragma omp parallel for schedule(dynamic, 1)
     for (int y = 0; y < image.Height(); y++)
@@ -70,21 +79,23 @@ int main(int argc, char *argv[])
                 debug = true;
             }
             Vector3f color;
-            if (parser.jitter)
+            unsigned short seed[3] = {y, y * x, static_cast<unsigned short>(y * x * y)};
+            for (int i = 0; i < parser.spp; i++)
             {
-                auto dx = double(rand_r(&rand_seed)) / __INT_MAX__;
-                auto dy = double(rand_r(&rand_seed)) / __INT_MAX__;
-                Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, y - 0.5 + dy));
-                Hit hit;
-                color = tracer.traceRay(camRay, 0.f, 0, hit, 1.f, debug);
+                if (parser.jitter)
+                {
+                    auto dx = erand48(seed);
+                    auto dy = erand48(seed);
+                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, y - 0.5 + dy));
+                    color += tracer->traceRay(camRay, 0.f, 0, seed, 1.f, debug);
+                }
+                else
+                {
+                    Ray camRay = camera->generateRay(Vector2f(x, y));
+                    color += tracer->traceRay(camRay, 0.f, 0, seed, 1.f, debug);
+                }
             }
-            else
-            {
-                Ray camRay = camera->generateRay(Vector2f(x, y));
-                Hit hit;
-                color = tracer.traceRay(camRay, 0.f, 0, hit, 1.f, debug);
-            }
-            image.SetPixel(x, y, color);
+            image.SetPixel(x, y, color / parser.spp);
         }
     }
     fprintf(stderr, "\rprocessing %5d/%-5d\n", image.Width(), image.Width());

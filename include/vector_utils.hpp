@@ -30,6 +30,11 @@ public:
         return out;
     }
 
+    static double max_element(const Vector3f &v)
+    {
+        return std::max(std::max(v[0], v[1]), v[2]);
+    }
+
     static Vector3f clamp(const Vector3f &data, double low = 0, double high = 1)
     {
         Vector3f out = data;

@@ -7,7 +7,10 @@
 #include "ray.hpp"
 #include "hit.hpp"
 #include "vector_utils.hpp"
+
+#ifndef EPSILON
 #define EPSILON 0.00001f
+#endif
 
 class SceneParser;
 
@@ -24,11 +27,18 @@ inline bool transmittedDirection(const Vector3f &normal, const Vector3f &incomin
     auto dn = Vector3f::dot(incoming, normal);
     double coff = dn > 0 ? -1 : 1;
     auto delta = 1 - index_n * index_n * (1 - dn * dn) / (index_nt * index_nt);
-    if (delta < 0)
+    const int eps = 1e-4;
+    if (delta < eps)
         return false;
     transmitted = index_n * (incoming - dn * normal) / index_nt - coff * normal * sqrt(delta);
     return true;
 }
+
+enum TraceType
+{
+    RT,
+    PT
+};
 
 class Tracer
 {
@@ -43,7 +53,7 @@ public:
 
     virtual ~Tracer() = default;
 
-    virtual Vector3f traceRay(const Ray &ray, double t_min, int bounces, Hit &hit, double currentIndex = 1.f, bool debug = false) const = 0;
+    virtual Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, double currentIndex = 1.f, bool debug = false) const = 0;
 
 protected:
     SceneParser *scene;
