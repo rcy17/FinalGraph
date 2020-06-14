@@ -51,7 +51,7 @@ Materials {
 }
 
 Group {
-    numObjects 9
+    numObjects 10
     MaterialIndex 0
     Plane {
         normal 1 0 0

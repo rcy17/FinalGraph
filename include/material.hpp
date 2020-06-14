@@ -59,7 +59,7 @@ public:
 
     Vector3f colorCorrect(const Ray &ray, const Hit &hit)
     {
-        if (hit.hasTex)
+        if (hit.hasTex && t.valid())
         {
             Vector2f texCoord = hit.texCoord;
             Vector3f texColor = t(texCoord[0], texCoord[1]);
