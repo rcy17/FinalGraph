@@ -48,6 +48,7 @@ SET(PA5_INCLUDES
         include/ray_tracer.hpp
         include/scene_parser.hpp
         include/sphere.hpp
+        include/tracer.hpp
         include/transform.hpp
         include/triangle.hpp
         include/texture.hpp
