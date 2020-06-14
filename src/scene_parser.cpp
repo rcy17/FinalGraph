@@ -23,7 +23,8 @@ SceneParser::SceneParser(const char *filename)
     current_material = NULL;
     cubemap = 0;
     // parse the file
-    assert(filename != NULL);
+    if (!filename)
+        return;
     const char *ext = &filename[strlen(filename) - 4];
 
     if (strcmp(ext, ".txt") != 0)

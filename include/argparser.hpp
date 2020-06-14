@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 #include "tracer.hpp"
+#include <list>
 
 class ArgParser
 {
@@ -117,6 +118,16 @@ public:
                         size = atoi(argv[i]);
                   }
 
+                  // merge files
+                  else if (!strcmp(argv[i], "-merge"))
+                  {
+                        for (i++; i < argc && argv[i][0] != '-'; i++)
+                        {
+                              segments.push_back(argv[i]);
+                        }
+                        i--;
+                  }
+
                   else
                   {
                         printf("Unknown command line argument %d: '%s'\n", i, argv[i]);
@@ -132,6 +143,8 @@ public:
                   if (jitter)
                         offset *= 3, size *= 3;
             }
+            assert((segments.empty() || set_size) && "Merge file must provide size\b");
+            assert(segments.size() || input_file && "No input provided!\n");
       }
 
       void DefaultValues()
@@ -204,6 +217,9 @@ public:
       // Range
       int offset;
       int size;
+
+      // load distributed data
+      list<const char *> segments;
 };
 
 #endif // ARG_PARSER_H

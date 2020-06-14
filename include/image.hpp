@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <vecmath.h>
+#include <list>
 
 // Simple image class
 class Image
@@ -16,9 +17,15 @@ public:
         data = new Vector3f[width * height];
     }
 
+    Image(Image &&image) : width(image.width), height(image.height), data(image.data)
+    {
+        image.data = nullptr;
+    }
+
     ~Image()
     {
-        delete[] data;
+        if (!data)
+            delete[] data;
     }
 
     int Width() const
@@ -64,6 +71,12 @@ public:
     int SaveBMP(const char *filename, bool gamma = false);
 
     void SaveImage(const char *filename, bool gamma = false);
+
+    void SaveRaw(const char *filename);
+
+    static Image *LoadRaw(const char *filename);
+
+    void Merge(std::list<const char *> filenames);
 
     void GaussianBlur();
 

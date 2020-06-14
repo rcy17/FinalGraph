@@ -22,13 +22,13 @@ public:
              double r = 0) : diffuseColor(d_color), refractionIndex(r), specularColor(s_color), lightColor(l_color)
     {
         if (lightColor != Vector3f::ZERO)
-            type = ILLUMINANT;
+            type = ILLUMINANT, color = lightColor;
         else if (refractionIndex > 0)
             type = REFRACTIVE;
         else if (specularColor != Vector3f::ZERO)
-            type = SPECULAR;
+            type = SPECULAR, color = specularColor;
         else
-            type = DIFFUSE;
+            type = DIFFUSE, color = diffuseColor;
     }
 
     virtual ~Material() = default;
@@ -88,6 +88,7 @@ protected:
     double refractionIndex;
     Vector3f specularColor;
     Vector3f lightColor;
+    Vector3f color; // for pt to get only one color
     Texture t;
     Noise noise;
     MeterialType type;

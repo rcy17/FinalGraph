@@ -338,6 +338,43 @@ void Image::SaveImage(const char *filename, bool gamma)
     }
 }
 
+void Image::SaveRaw(const char *filename)
+{
+    auto file = fopen(filename, "wb");
+    fwrite(&height, sizeof(int), 1, file);
+    fwrite(&width, sizeof(int), 1, file);
+    fwrite(data, sizeof(data[0]), width * height, file);
+    fclose(file);
+}
+
+Image *Image::LoadRaw(const char *filename)
+{
+    auto file = fopen(filename, "rb");
+    int h, w;
+    fread(&h, sizeof(int), 1, file);
+    fread(&w, sizeof(int), 1, file);
+    auto image = new Image(w, h);
+    fread(image->data, sizeof(data[0]), h * w, file);
+    fclose(file);
+    return image;
+}
+
+void Image::Merge(std::list<const char *> filenames)
+{
+    int h = 0;
+    for (auto filename : filenames)
+    {
+        auto image = LoadRaw(filename);
+        assert(image->height <= height - h && image->width == width && "Size error!\n");
+        memcpy(data + h * width, image->data, image->height * image->width * sizeof(data[0]));
+        image->SaveBMP("12414.bmp");
+        SaveBMP("412412.bmp");
+        h += image->height;
+        delete image;
+    }
+    assert(h == height && "Size error!\n");
+}
+
 void Image::GaussianBlur()
 {
     Image temp(width, height);
