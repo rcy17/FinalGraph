@@ -21,7 +21,7 @@ Background {
 }
 
 Materials {
-    numMaterials 6
+    numMaterials 7
     Material { 
         diffuseColor 0.75 0.25 0.25
     }
@@ -40,10 +40,13 @@ Materials {
     Material { 
         lightColor 20 20 20
     }
+    Material {
+        specularColor 0 0 0
+    }
 }
 
 Group {
-    numObjects 8
+    numObjects 9
     MaterialIndex 0
     Plane {
         normal 1 0 0
@@ -86,6 +89,13 @@ Group {
         center 50 681.33 81.6
         radius 600
     }
+
+    MaterialIndex 6
+    Plane {
+        normal 0 0 -1
+        offset -170
+    }
+
 
 
 }

@@ -367,8 +367,6 @@ void Image::Merge(std::list<const char *> filenames)
         auto image = LoadRaw(filename);
         assert(image->height <= height - h && image->width == width && "Size error!\n");
         memcpy(data + h * width, image->data, image->height * image->width * sizeof(data[0]));
-        image->SaveBMP("12414.bmp");
-        SaveBMP("412412.bmp");
         h += image->height;
         delete image;
     }

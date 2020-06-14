@@ -19,8 +19,10 @@
 
 using namespace std;
 
-Image render(const ArgParser &parser, SceneParser *scene, Camera *camera, int offset, int y_range)
+Image render(const ArgParser &parser, SceneParser *scene, int height, int width, int offset, int y_range)
 {
+    auto camera = scene->getCamera();
+    camera->setSize(width, height);
     Image image(camera->getWidth(), y_range);
     Tracer *tracer;
     switch (parser.type)
@@ -41,7 +43,7 @@ Image render(const ArgParser &parser, SceneParser *scene, Camera *camera, int of
         {
             int _y = y + offset;
             bool debug = false;
-            if (_y == 32 && x == 17 && 0)
+            if (_y == 72 && x == 72 && 1)
             {
                 debug = true;
             }
@@ -53,13 +55,14 @@ Image render(const ArgParser &parser, SceneParser *scene, Camera *camera, int of
                 {
                     auto dx = erand48(seed);
                     auto dy = erand48(seed);
+                    double distance;
                     Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, _y - 0.5 + dy));
-                    color += tracer->traceRay(camRay, EPSILON, 0, seed, 1.f, debug);
+                    color += tracer->traceRay(camRay, 150, 0, seed, 1.f, debug);
                 }
                 else
                 {
                     Ray camRay = camera->generateRay(Vector2f(x, _y));
-                    color += tracer->traceRay(camRay, EPSILON, 0, seed, 1.f, debug);
+                    color += tracer->traceRay(camRay, 150, 0, seed, 1.f, debug);
                 }
             }
             image.SetPixel(x, y, VectorUtils::clamp(color / parser.spp));
@@ -86,17 +89,19 @@ int main(int argc, char *argv[])
     ArgParser parser(argc, argv);
 
     SceneParser scene(parser.input_file);
-    auto camera = scene.getCamera();
+    int height, width;
     if (parser.set_size)
-        camera->setSize(parser.width, parser.height);
+        height = parser.height, width = parser.width;
+    else
+        height = scene.getCamera()->getHeight(), width = scene.getCamera()->getHeight();
     if (parser.jitter)
-        camera->setSize(camera->getWidth() * 3, camera->getHeight() * 3);
+        height *= 3, width *= 3;
 
     int offset = parser.offset;
-    int y_range = (parser.size ? parser.size : camera->getHeight() - offset);
-    bool segment = y_range != camera->getHeight();
+    int y_range = (parser.size ? parser.size : height - offset);
+    bool segment = y_range != height;
 
-    auto image = parser.segments.empty() ? render(parser, &scene, camera, offset, y_range) : merge(parser);
+    auto image = parser.segments.empty() ? render(parser, &scene, height, width, offset, y_range) : merge(parser);
 
     if (segment)
     {

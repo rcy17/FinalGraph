@@ -24,7 +24,10 @@ SceneParser::SceneParser(const char *filename)
     cubemap = 0;
     // parse the file
     if (!filename)
+    {
         return;
+    }
+
     const char *ext = &filename[strlen(filename) - 4];
 
     if (strcmp(ext, ".txt") != 0)
@@ -306,7 +309,7 @@ Material *SceneParser::parseMaterial()
     char token[MAX_PARSER_TOKEN_LENGTH];
     char filename[MAX_PARSER_TOKEN_LENGTH];
     filename[0] = 0;
-    Vector3f diffuseColor(1, 1, 1), specularColor(0, 0, 0), lightColor(0, 0, 0);
+    Vector3f diffuseColor(0, 0, 0), specularColor(0, 0, 0), lightColor(0, 0, 0);
     double shininess = 0;
     double refractionIndex = 0;
     getToken(token);

@@ -19,7 +19,7 @@ public:
     }
 
     // Generate rays for each screen-space coordinate
-    virtual Ray generateRay(const Vector2f &point) = 0;
+    virtual Ray generateRay(const Vector2f &point, double *distance = nullptr) = 0;
     virtual ~Camera() = default;
 
     int getWidth() const { return width; }
@@ -55,14 +55,16 @@ public:
     {
         this->width = width, this->height = height;
         f_x = width / (2 * tan(angle / 2));
-        f_y = height / (2 * tan(angle / 2));
+        f_y = f_x;
+        //f_y = height / (2 * tan(angle / 2));
     }
 
-    Ray generateRay(const Vector2f &point) override
+    Ray generateRay(const Vector2f &point, double *distance = nullptr) override
     {
         Vector3f ray((point.x() - width / 2) / f_x, (point.y() - height / 2) / f_y, 1);
         Matrix3f transform(horizontal, up, direction);
-        return Ray(center, (transform * ray).normalized());
+        ray = transform * ray;
+        return Ray(center, ray.normalized());
     }
 
 private:
