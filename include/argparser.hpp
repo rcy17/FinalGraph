@@ -100,9 +100,21 @@ public:
                         spp = atoi(argv[i]);
                   }
 
+                  // gamma correction
                   else if (!strcmp(argv[i], "-gamma"))
                   {
                         gamma = 1;
+                  }
+
+                  // y-range
+                  else if (!strcmp(argv[i], "-range"))
+                  {
+                        i++;
+                        assert(i < argc);
+                        offset = atoi(argv[i]);
+                        i++;
+                        assert(i < argc);
+                        size = atoi(argv[i]);
                   }
 
                   else
@@ -144,6 +156,10 @@ public:
 
             // gamma correct
             gamma = 0;
+
+            // range for distributed calculation
+            offset = 0;
+            size = 0;
       }
 
       // ==============
@@ -177,6 +193,10 @@ public:
 
       // Gamma Correction
       int gamma;
+
+      // Range
+      int offset;
+      int size;
 };
 
 #endif // ARG_PARSER_H

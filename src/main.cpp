@@ -67,8 +67,11 @@ int main(int argc, char *argv[])
         break;
     }
 
+    int y_start = parser.offset;
+    int y_stop = y_start + (parser.offset ? parser.offset : image.Height() - y_start);
+
 #pragma omp parallel for schedule(dynamic, 1)
-    for (int y = 0; y < image.Height(); y++)
+    for (int y = y_start; y < y_stop; y++)
     {
         fprintf(stderr, "\rprocessing %5d/%-5d", y, image.Width());
         for (int x = 0; x < image.Width(); x++)
