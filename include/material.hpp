@@ -80,6 +80,7 @@ public:
     Vector3f getDiffuseColor() const { return diffuseColor; }
     Vector3f getSpecularColor() const { return specularColor; }
     Vector3f getLightColor() const { return lightColor; }
+    Vector3f getColor(const Hit &hit) const { return color; }
     MeterialType getType() const { return type; }
     void setNoise(const Noise &n) { noise = n; }
 
