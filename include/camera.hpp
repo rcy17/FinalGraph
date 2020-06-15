@@ -50,8 +50,8 @@ public:
                       int imgW, int imgH, double angle, double dis) : Camera(center, direction, up, imgW, imgH, dis)
     {
         // angle is in radian.
-        f_x = width / (2 * tan(angle / 2));
-        f_y = f_x;
+        f_x = f_y = height / (2 * tan(angle / 2));
+
         // f_y = height / (2 * tan(angle / 2));
         this->angle = angle;
     }
@@ -59,7 +59,7 @@ public:
     void setSize(int width, int height)
     {
         this->width = width, this->height = height;
-        f_x = width / (2 * tan(angle / 2));
+        f_x = height / (2 * tan(angle / 2));
         f_y = f_x;
         //f_y = height / (2 * tan(angle / 2));
     }
