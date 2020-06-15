@@ -197,7 +197,7 @@ private:
     double get_sphere_intersect(Ray ray, Vector3f o, double r)
     {
         Vector3f ro = o - ray.getOrigin();
-        double b = Vector3f::dot(ray.getDirection(), ro);
+        double b = Vector3f::dot(ray.getNormalizedDirection(), ro);
         double d = sqr(b) - Vector3f::dot(ro, ro) + sqr(r);
         if (d < 0)
             return -1;
@@ -206,7 +206,7 @@ private:
         double t = b - d > EPS ? b - d : b + d > EPS ? b + d : -1;
         if (t < 0)
             return -1;
-        return t;
+        return t / ray.getDirectionLength();
     }
 
     bool check(double low, double upp, double init, Ray ray, double a, double b, double c, double &final_dis)

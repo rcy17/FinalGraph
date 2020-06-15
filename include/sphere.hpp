@@ -27,11 +27,9 @@ public:
 
     bool intersect(const Ray &r, Hit &h, double t_min) override
     {
-        const auto &origin = r.getOrigin();
-        const auto &direction = r.getNormalizedDirection();
-        auto l = center - origin;
+        auto l = center - r.getOrigin();
         auto l_square = l.squaredLength();
-        auto t_p = Vector3f::dot(l, direction);
+        auto t_p = Vector3f::dot(l, r.getNormalizedDirection());
 
         auto d_square = l_square - t_p * t_p;
         if (d_square >= radius_square)

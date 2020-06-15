@@ -45,7 +45,7 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
         {
             int _y = y + offset;
             bool debug = false;
-            if (_y == 50 && x == 1 && parser.debug)
+            if (_y == 100 && x == 100 && parser.debug)
             {
                 debug = true;
             }
