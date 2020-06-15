@@ -137,16 +137,31 @@ void SceneParser::parsePerspectiveCamera()
     assert(!strcmp(token, "angle"));
     double angle_degrees = readFloat();
     double angle_radians = DegreesToRadians(angle_degrees);
-    // Here add width and height parser from scene.txt
+    // Here are some options
     getToken(token);
-    assert(!strcmp(token, "width"));
-    int width = readInt();
-    getToken(token);
-    assert(!strcmp(token, "height"));
-    int height = readInt();
-    getToken(token);
-    assert(!strcmp(token, "}"));
-    camera = new PerspectiveCamera(center, direction, up, width, height, angle_radians);
+    int width = 0, height = 0;
+    double distance = 0;
+    while (strcmp(token, "}"))
+    {
+        if (!strcmp(token, "width"))
+        {
+            width = readInt();
+        }
+        else if (!strcmp(token, "height"))
+        {
+            height = readInt();
+        }
+        else if (!strcmp(token, "distance"))
+        {
+            distance = readFloat();
+        }
+        else
+        {
+            printf("Ignore token %s\n", token);
+        }
+        getToken(token);
+    }
+    camera = new PerspectiveCamera(center, direction, up, width, height, angle_radians, distance);
 }
 
 void SceneParser::parseBackground()

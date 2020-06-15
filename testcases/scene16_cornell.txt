@@ -3,9 +3,10 @@ PerspectiveCamera {
     center 50 52 295.6
     direction 0 -0.042612 -1
     up 0 1 0
-    angle 30
+    angle 27
     width 800
     height 800
+    distance 140
 }
 
 Lights {
@@ -36,6 +37,7 @@ Materials {
     }
     Material { 
         refractionIndex 1.5
+        specularColor 0.999 0.999 0.999
     }
     Material { 
         lightColor 20 20 20
