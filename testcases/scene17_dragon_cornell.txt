@@ -37,6 +37,7 @@ Materials {
     }
     Material { 
         refractionIndex 1.5
+        specularColor 0.999 0.999 0.999
     }
     Material { 
         lightColor 20 20 20
@@ -45,7 +46,7 @@ Materials {
         specularColor 0 0 0
     }
     Material {
-        specularColor 1 1 1
+        specularColor 0.999 0.999 0.999
         diffuseColor 0.9 0.9 0.5
         refractionIndex 1.5
     }
