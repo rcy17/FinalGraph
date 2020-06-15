@@ -128,6 +128,11 @@ public:
                         i--;
                   }
 
+                  else if (!strcmp(argv[i], "-debug") || !strcmp(argv[i], "-d"))
+                  {
+                        debug = true;
+                  }
+
                   else
                   {
                         printf("Unknown command line argument %d: '%s'\n", i, argv[i]);
@@ -200,19 +205,19 @@ public:
       double depth_min;
       double depth_max;
       int bounces;
-      int shadows;
-      int refractions;
+      bool shadows;
+      bool refractions;
       TraceType type;
 
       // supersampling
-      int jitter;
-      int filter;
+      bool jitter;
+      bool filter;
 
       // Samples Per Pixel
       int spp;
 
       // Gamma Correction
-      int gamma;
+      bool gamma;
 
       // Range
       int offset;
@@ -220,6 +225,9 @@ public:
 
       // load distributed data
       list<const char *> segments;
+
+      // debug choice
+      bool debug;
 };
 
 #endif // ARG_PARSER_H
