@@ -37,7 +37,7 @@ public:
                    const Vector3f &dirToLight, const Vector3f &lightColor)
     {
         Vector3f kd;
-        if (t.valid() && hit.hasTex)
+        if (hit.hasTex && t.valid())
         {
             Vector2f texCoord = hit.texCoord;
             Vector3f texColor = t(texCoord[0], texCoord[1]);

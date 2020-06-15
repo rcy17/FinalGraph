@@ -355,7 +355,7 @@ public:
                     Vector2f tmp = change_for_bezier(inter_p);
                     h.set(final_dis, material, norm(inter_p));
                     h.hasTex = true;
-                    h.texCoord = Vector2f(tmp.x(), tmp.y());
+                    h.texCoord = Vector2f(1 - tmp.x() / 2 / M_PI, tmp.y());
                     return true;
                 }
         }
@@ -389,23 +389,18 @@ public:
             check(t0, t1, (t1 + t0) / 2, ray, a, b, c, final_dis);
         }
 
-        if (final_dis < INF / 2)
+        if (final_dis < INF / 2 && final_dis >= tmin && final_dis < h.getT())
         {
-            if (final_dis >= tmin)
-                if (final_dis < h.getT())
-                {
-                    Vector2f tmp = change_for_bezier(ray.pointAtParameter(final_dis));
-                    if (tmp.x() >= -1e5 && tmp.x() <= 1e5 && tmp.y() >= -1e5 && tmp.y() <= 1e5)
-                    {
-                        h.set(final_dis, material, norm(ray.pointAtParameter(final_dis)));
-                        h.hasTex = true;
-                        h.texCoord = Vector2f(tmp.x(), tmp.y());
-                        return true;
-                    }
-                }
+            Vector2f tmp = change_for_bezier(ray.pointAtParameter(final_dis));
+            if (tmp.x() >= -1e5 && tmp.x() <= 1e5 && tmp.y() >= -1e5 && tmp.y() <= 1e5)
+            {
+                h.set(final_dis, material, norm(ray.pointAtParameter(final_dis)));
+                h.hasTex = true;
+                h.texCoord = Vector2f(1 - tmp.x() / 2 / M_PI, tmp.y());
+                return true;
+            }
         }
-        else
-            return false;
+        return false;
     }
 };
 
