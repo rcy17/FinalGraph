@@ -62,7 +62,8 @@ public:
         {
             // Regard nt as red color's nt, calculate green and blue's
             // Wave length: red 700 nm, green 546 nm, blue 436 nm
-            double k[3] = {1, 700. / 546, 700. / 436};
+            // Related to Na yellow
+            double k[3] = {589. / 700, 589. / 546, 589./ 436};
             //double k[3] = {1, 1, 1};
             auto reflect_direction = mirrorDirection(normal, incoming);
             auto result = Vector3f::ZERO;
