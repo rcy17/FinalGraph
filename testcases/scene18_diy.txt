@@ -1,8 +1,8 @@
 PerspectiveCamera {
-    center -2 1 -0.2
-    direction 1.5 -0.48 -0.08
+    center -1.8 1.2 -0.05
+    direction 1.5 -0.37 0
     up 0 1 0
-    angle 33.7
+    angle 75
     width 800
     height 800
     distance 1.5
@@ -39,7 +39,7 @@ Materials {
     }
     Material { 
         refractionIndex 1.5
-        specularColor 0.999 0.999 0.999
+        specularColor 0.9 0.9 0.9
     }
     Material { 
         lightColor 20 20 20
@@ -99,7 +99,7 @@ Group {
 
     MaterialIndex 5
     Sphere {
-        center 0 0.1 60.9999
+        center 0 0.5 60.9999
         radius 60
     }
 

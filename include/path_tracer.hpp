@@ -46,7 +46,7 @@ public:
             return scene->getBackgroundColor();
         if (bounces >= max_bounces)
         {
-            if (erand48(seed) < possibility)
+            if (bounces <= 1000 && erand48(seed) < possibility)
                 color = color / possibility;
             else
                 return scene->getBackgroundColor();
@@ -64,7 +64,6 @@ public:
             // Wave length: red 700 nm, green 546 nm, blue 436 nm
             double k[3] = {1, 700. / 546, 700. / 436};
             //double k[3] = {1, 1, 1};
-            auto c = material->getSpecularColor();
             auto reflect_direction = mirrorDirection(normal, incoming);
             auto result = Vector3f::ZERO;
             bool go_in = Vector3f::dot(normal, incoming) < 0;
@@ -73,11 +72,9 @@ public:
                 start = channel, stop = channel + 1;
             for (int i = start; i < stop; i++)
             {
-                double eta = material->getRefractionIndex();
+                double eta = material->getRefractionIndex() * k[i];
                 auto sc = Vector3f::ZERO;
-                sc[i] = c[i];
-                assert(eta > 1);
-                eta *= k[i];
+                sc[i] = color[i];
                 if (go_in)
                     eta = 1 / eta;
                 if (!transmittedDirection(normal, incoming, eta, 1, dir_refract))
