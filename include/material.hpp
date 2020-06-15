@@ -80,7 +80,7 @@ public:
     Vector3f getDiffuseColor() const { return diffuseColor; }
     Vector3f getSpecularColor() const { return specularColor; }
     Vector3f getLightColor() const { return lightColor; }
-    Vector3f getColor(const Hit &hit, const Vector3f &p) const
+    Vector3f getColor(const Hit &hit, const Vector3f &p, const Vector3f incoming, unsigned short *seed) const
     {
         if (hit.hasTex && t.valid())
         {
@@ -90,6 +90,11 @@ public:
         }
         if (noise.valid())
             return noise.getColor(p);
+        if (type == ILLUMINANT)
+            //    return -Vector3f::dot(hit.getNormal(), incoming) > 0.9 ? color : Vector3f::ZERO;
+            return erand48(seed) < -Vector3f::dot(hit.getNormal(), incoming) ? color : Vector3f::ZERO;
+        //return -Vector3f::dot(hit.getNormal(), incoming) * color;
+
         return color;
     }
     MeterialType getType() const { return type; }

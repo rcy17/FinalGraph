@@ -33,7 +33,7 @@ public:
         auto material = hit.getMaterial();
         auto normal = hit.getNormal().normalized();
         auto incoming = ray.getNormalizedDirection();
-        Vector3f color = material->getColor(hit, p);
+        Vector3f color = material->getColor(hit, p, incoming, seed);
         if (channel != ALL)
             color = color * CHANNEL_COLOR[channel];
         Vector3f dir_reflect = mirrorDirection(normal, incoming);
@@ -63,7 +63,7 @@ public:
             // Regard nt as red color's nt, calculate green and blue's
             // Wave length: red 700 nm, green 546 nm, blue 436 nm
             // Related to Na yellow
-            double k[3] = {589. / 700, 589. / 546, 589./ 436};
+            double k[3] = {589. / 700, 589. / 546, 589. / 436};
             //double k[3] = {1, 1, 1};
             auto reflect_direction = mirrorDirection(normal, incoming);
             auto result = Vector3f::ZERO;
