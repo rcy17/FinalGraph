@@ -461,6 +461,14 @@ Object3D *SceneParser::parseObject(char token[MAX_PARSER_TOKEN_LENGTH])
     {
         answer = (Object3D *)parseTransform();
     }
+    else if (!strcmp(token, "BezierCurve"))
+    {
+        answer = (Object3D *)parseBezierCurve();
+    }
+    else if (!strcmp(token, "RevSurface"))
+    {
+        answer = (Object3D *)parseBezierSurface();
+    }
     else
     {
         printf("Unknown token in parseObject: '%s'\n", token);
@@ -679,6 +687,72 @@ Transform *SceneParser::parseTransform()
     getToken(token);
     assert(!strcmp(token, "}"));
     return new Transform(matrix, object);
+}
+
+// ====================================================================
+// ====================================================================
+
+BezierCurve2D *SceneParser::parseBezierCurve()
+{
+    char token[MAX_PARSER_TOKEN_LENGTH];
+    getToken(token);
+    assert(!strcmp(token, "{"));
+    getToken(token);
+    assert(!strcmp(token, "controls"));
+    vector<Vector3f> controls;
+    while (true)
+    {
+        getToken(token);
+        if (!strcmp(token, "["))
+        {
+            controls.push_back(readVector3f());
+            getToken(token);
+            assert(!strcmp(token, "]"));
+        }
+        else if (!strcmp(token, "}"))
+        {
+            break;
+        }
+        else
+        {
+            printf("Incorrect format for BezierCurve!\n");
+            exit(0);
+        }
+    }
+    Vector2f *controls2d = new Vector2f[controls.size()];
+    for (int i = 0; i < controls.size(); ++i)
+        controls2d[i] = Vector2f(controls[i].x(), controls[i].y());
+    BezierCurve2D *answer = new BezierCurve2D(controls2d, controls.size(), controls.size());
+    delete[] controls2d;
+
+    return answer;
+}
+
+// ====================================================================
+// ====================================================================
+
+BezierSurface *SceneParser::parseBezierSurface()
+{
+    char token[MAX_PARSER_TOKEN_LENGTH];
+    getToken(token);
+    assert(!strcmp(token, "{"));
+    getToken(token);
+    assert(!strcmp(token, "profile"));
+    BezierCurve2D *profile;
+    getToken(token);
+    if (!strcmp(token, "BezierCurve"))
+    {
+        profile = parseBezierCurve();
+    }
+    else
+    {
+        printf("Unknown profile type in parseBezierSurface: '%s'\n", token);
+        exit(0);
+    }
+    getToken(token);
+    assert(!strcmp(token, "}"));
+    auto *answer = new BezierSurface(profile, current_material);
+    return answer;
 }
 
 // ====================================================================

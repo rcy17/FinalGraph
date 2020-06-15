@@ -1,0 +1,105 @@
+PerspectiveCamera {
+    center 3 2 10
+    direction -0.3 0.1 -1
+    up 0 1 0
+    angle 70
+    width 1500
+    height 1500
+    aperture 10
+}
+
+Lights {
+    numLights 3
+    PointLight {
+        position 0 9 -3
+        color 2 2 2
+    }
+    PointLight {
+        position 0 5 14 
+        color 8 8 11
+    }
+    PointLight {
+        position 2.5 1.5 3.5
+        color 2 2 2
+    }
+}
+
+Materials {
+    numMaterials 15
+    Material {
+        diffuseColor 1 1 1 
+        texture mesh/wood.bmp
+	}
+    Material {
+        diffuseColor 1 1 1 
+        texture mesh/wood2.bmp
+	}
+    Material {
+        diffuseColor 1 1 1 
+        texture mesh/wood3.bmp
+	}
+    Material {
+        diffuseColor 1 1 1 
+        texture mesh/carpet.bmp
+	}
+    Material {
+        diffuseColor 1 1 1 
+        texture mesh/brick.bmp
+	}
+    Material {
+        diffuseColor 1 1 1 
+        texture mesh/leather.bmp
+	}
+    Material {
+        diffuseColor 0.7 0.7 0.7
+        texture mesh/marble.bmp
+    }
+    Material {
+        diffuseColor 0.5 0.5 0.5 
+        texture mesh/vase.bmp
+    }
+    Material {
+        diffuseColor 1 1 1
+        texture mesh/laoba.bmp
+    }
+    Material {
+        diffuseColor 0.2 0.3 1
+	}
+    Material {
+        diffuseColor 1 0.3 0.2
+    }
+    Material {
+        diffuseColor 0.9 0.9 1
+        specularColor 0.9 0.9 0.9
+	}
+    Material {
+        diffuseColor 0.6 0.6 0.6
+        specularColor 1 1 1
+	}
+    Material {
+        diffuseColor 0.4 1 0.2
+    }
+    Material {
+        diffuseColor 1 1 1 
+        specularColor 1 1 1
+	}
+}
+
+Group {
+    numObjects 1
+
+    MaterialIndex 7
+    RevSurface {
+        profile BezierCurve {
+            controls
+                [ 1.25     0       0 ]
+                [ 1.75     1.5    0 ]
+                [ 2      2       0 ]
+                [ 1.75     2.5    0 ]
+                [ 1.25     3     0 ]
+                [ 0.8       5     0 ]
+                [ 1      7     0 ]
+        }
+    }
+
+}
