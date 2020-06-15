@@ -8,21 +8,21 @@ void Texture::load(const char *filename)
     width = bimg->width();
 }
 
-void Texture::operator()(int x, int y, unsigned char *color)
+void Texture::operator()(int x, int y, unsigned char *color) const
 {
     x = clamp(x, 0, width - 1);
     y = clamp(y, 0, height - 1);
     bimg->get_pixel(x, y, color[0], color[1], color[2]);
 }
 
-bool Texture::valid()
+bool Texture::valid() const
 {
     return bimg != nullptr;
 }
 
 ///@param x assumed to be between 0 and 1
 Vector3f
-Texture::operator()(double x, double y)
+Texture::operator()(double x, double y) const
 {
     Vector3f color;
     int ix, iy;

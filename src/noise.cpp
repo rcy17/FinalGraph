@@ -1,7 +1,7 @@
 #include "noise.hpp"
 #include "perlin_noise.hpp"
 
-Vector3f Noise::getColor(const Vector3f &pos)
+Vector3f Noise::getColor(const Vector3f &pos) const
 {
 	//Fill in this function  ONLY.
 	//INTERPOLATE BETWEEN TWO COLORS BY WEIGHTED AVERAGE
@@ -25,7 +25,7 @@ Noise::Noise(const Noise &n) : octaves(n.octaves), frequency(n.frequency),
 	color[1] = n.color[1];
 }
 
-bool Noise::valid()
+bool Noise::valid() const
 {
 	return init;
 }

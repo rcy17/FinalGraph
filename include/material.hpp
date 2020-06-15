@@ -24,7 +24,7 @@ public:
         if (lightColor != Vector3f::ZERO)
             type = ILLUMINANT, color = lightColor;
         else if (refractionIndex > 0)
-            type = REFRACTIVE;
+            type = REFRACTIVE, color = specularColor;
         else if (specularColor != Vector3f::ZERO)
             type = SPECULAR, color = specularColor;
         else
@@ -80,7 +80,18 @@ public:
     Vector3f getDiffuseColor() const { return diffuseColor; }
     Vector3f getSpecularColor() const { return specularColor; }
     Vector3f getLightColor() const { return lightColor; }
-    Vector3f getColor(const Hit &hit) const { return color; }
+    Vector3f getColor(const Hit &hit, const Vector3f &p) const
+    {
+        if (hit.hasTex && t.valid())
+        {
+            Vector2f texCoord = hit.texCoord;
+            Vector3f texColor = t(texCoord[0], texCoord[1]);
+            return texColor;
+        }
+        if (noise.valid())
+            return noise.getColor(p);
+        return color;
+    }
     MeterialType getType() const { return type; }
     void setNoise(const Noise &n) { noise = n; }
 

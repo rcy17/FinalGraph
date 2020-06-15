@@ -9,8 +9,8 @@ public:
 		  const Vector3f &color1 = Vector3f::ZERO,
 		  const Vector3f &color2 = Vector3f(1, 1, 1),
 		  double freq = 1, double amp = 1);
-	Vector3f getColor(const Vector3f &pos);
-	bool valid();
+	Vector3f getColor(const Vector3f &pos) const;
+	bool valid() const;
 
 	Noise(const Noise &n);
 

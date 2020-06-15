@@ -27,21 +27,21 @@ public:
             auto material = hit.getMaterial();
             auto normal = hit.getNormal().normalized();
             auto incoming = ray.getNormalizedDirection();
-            Vector3f color;
+            Vector3f color = material->getColor(hit, p);
             Vector3f direction;
             double eta = material->getRefractionIndex();
             switch (material->getType())
             {
             case ILLUMINANT:
-                color = material->getLightColor();
+                // do nothing
                 break;
             case DIFFUSE:
                 direction = hit.getRandomReflect(incoming, seed);
-                color = material->getDiffuseColor() * traceRay({p, direction}, EPSILON, bounces + 1, seed);
+                color = color * traceRay({p, direction}, EPSILON, bounces + 1, seed);
                 break;
             case SPECULAR:
                 direction = mirrorDirection(normal, incoming);
-                color = material->getSpecularColor() * traceRay({p, direction}, EPSILON, bounces + 1, seed);
+                color = color * traceRay({p, direction}, EPSILON, bounces + 1, seed);
                 break;
             case REFRACTIVE:
             {
@@ -52,19 +52,19 @@ public:
                     eta = 1 / eta;
                 auto reflect_direction = mirrorDirection(normal, incoming);
                 if (!transmittedDirection(normal, incoming, eta, 1, direction))
-                    color = material->getSpecularColor() * traceRay({p, reflect_direction}, EPSILON, bounces + 1, seed);
+                    color = color * traceRay({p, reflect_direction}, EPSILON, bounces + 1, seed);
                 else
                 {
                     auto R0 = (eta - 1) * (eta - 1) / (eta + 1) / (eta + 1);
                     auto c = 1 - fabs(Vector3f::dot(eta > 1 ? direction : incoming, normal));
                     auto R = R0 + (1 - R0) * c * c * c * c * c;
                     color = (1 - R) * traceRay({p, direction}, EPSILON, bounces + 1, seed) +
-                            R * traceRay({p, reflect_direction}, EPSILON, bounces + 1, seed) * material->getSpecularColor();
+                            R * traceRay({p, reflect_direction}, EPSILON, bounces + 1, seed) * color;
                 }
                 break;
             }
             }
-            return color * material->colorCorrect(ray, hit);
+            return color;
         }
         else
             return scene->getBackgroundColor(ray.getDirection());
