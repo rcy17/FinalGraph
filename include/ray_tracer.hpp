@@ -19,7 +19,7 @@ public:
 
     ~RayTracer() = default;
 
-    Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, double currentIndex = 1.f, bool debug = false) const
+    Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, Channel channel = ALL, bool debug = false) const
     {
         Hit hit(FLT_MAX, NULL, Vector3f(0, 0, 0));
         Vector3f finalColor = Vector3f::ZERO;
@@ -74,10 +74,10 @@ public:
                 double reflectivity = 1.f;
                 if (use_refract && material->getRefractionIndex() > 0)
                 {
-                    double n = currentIndex;
+                    double n = 1;
                     double nt = material->getRefractionIndex();
-                    if (nt == n)
-                        nt = 1.f;
+                    if (Vector3f::dot(normal, incoming) < 0)
+                        swap(n, nt);
 
                     if (transmittedDirection(normal, incoming, n, nt, direction))
                     {
@@ -91,7 +91,7 @@ public:
                             printf("tag: %lx, bounces: %d, R: %lf, transmitted direction: ", &c, bounces, R);
                             direction.print();
                         }
-                        finalColor += (1 - R) * traceRay(_ray, EPSILON, bounces + 1, seed, nt, debug);
+                        finalColor += (1 - R) * traceRay(_ray, EPSILON, bounces + 1, seed, ALL, debug);
                         if (debug)
                         {
                             printf("tag: %lx, bounces: %d, after transmitted:", &c, bounces);
@@ -109,7 +109,7 @@ public:
                         direction.print();
                     }
                     finalColor += reflectivity * material->getSpecularColor() *
-                                  traceRay(_ray, EPSILON, bounces + 1, seed, currentIndex, debug);
+                                  traceRay(_ray, EPSILON, bounces + 1, seed, channel, debug);
                     if (debug)
                     {
                         printf("bounces: %d, after reflect:", bounces);

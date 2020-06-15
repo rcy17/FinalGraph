@@ -15,11 +15,16 @@ public:
 
     ~PathTracer() = default;
 
-    Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, double currentIndex = 1.f, bool debug = false) const
+    Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, Channel channel = ALL, bool debug = false) const
     {
 
         Hit hit(FLT_MAX, NULL, Vector3f(0, 0, 0));
         const auto group = scene->getGroup();
+        const Vector3f CHANNEL_COLOR[] = {
+            Vector3f{1, 0, 0},
+            Vector3f{0, 1, 0},
+            Vector3f{0, 0, 1},
+        };
 
         if (!group->intersect(ray, hit, t_min))
             return scene->getBackgroundColor(ray.getDirection());
@@ -29,12 +34,16 @@ public:
         auto normal = hit.getNormal().normalized();
         auto incoming = ray.getNormalizedDirection();
         Vector3f color = material->getColor(hit, p);
+        if (channel != ALL)
+            color = color * CHANNEL_COLOR[channel];
         Vector3f dir_reflect = mirrorDirection(normal, incoming);
         Vector3f dir_refract;
         double eta = material->getRefractionIndex();
         if (material->getType() == ILLUMINANT)
             return color;
         double possibility = std::max(std::max(color[0], color[1]), color[2]);
+        if (possibility < EPS)
+            return scene->getBackgroundColor();
         if (bounces >= max_bounces)
         {
             if (erand48(seed) < possibility)
@@ -46,33 +55,53 @@ public:
         switch (material->getType())
         {
         case DIFFUSE:
-            return color * traceRay({p, hit.getRandomReflect(incoming, seed)}, EPSILON, bounces + 1, seed);
+            return color * traceRay({p, hit.getRandomReflect(incoming, seed)}, EPSILON, bounces + 1, seed, channel);
         case SPECULAR:
-            return color * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed);
+            return color * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed, channel);
         case REFRACTIVE:
-            assert(eta > 1);
-            if (Vector3f::dot(normal, incoming) < 0)
-                eta = 1 / eta;
-            if (!transmittedDirection(normal, incoming, eta, 1, dir_refract))
-                // total relection
-                return color * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed);
-            else
+        {
+            // Regard nt as red color's nt, calculate green and blue's
+            // Wave length: red 700 nm, green 546 nm, blue 436 nm
+            double k[3] = {1, 700. / 546, 700. / 436};
+            //double k[3] = {1, 1, 1};
+            auto c = material->getSpecularColor();
+            auto reflect_direction = mirrorDirection(normal, incoming);
+            auto result = Vector3f::ZERO;
+            bool go_in = Vector3f::dot(normal, incoming) < 0;
+            int start = 0, stop = 3;
+            if (channel != ALL)
+                start = channel, stop = channel + 1;
+            for (int i = start; i < stop; i++)
             {
-                auto R0 = (eta - 1) * (eta - 1) / (eta + 1) / (eta + 1);
-                auto c = 1 - fabs(Vector3f::dot(eta > 1 ? dir_refract : incoming, normal));
-                auto R = R0 + (1 - R0) * c * c * c * c * c;
-                possibility = 0.25 + R / 2;
-                if (bounces)
-                    // Mento Carlo by Russian roulette
-                    if (erand48(seed) < possibility)
-                        return color * R / possibility * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed);
-                    else
-                        return color * (1 - R) / (1 - possibility) * traceRay({p, dir_refract}, EPSILON, bounces + 1, seed);
+                double eta = material->getRefractionIndex();
+                auto sc = Vector3f::ZERO;
+                sc[i] = c[i];
+                assert(eta > 1);
+                eta *= k[i];
+                if (go_in)
+                    eta = 1 / eta;
+                if (!transmittedDirection(normal, incoming, eta, 1, dir_refract))
+                    result += sc * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed, Channel(i));
                 else
-                    // trace two direction for the first time
-                    return color * ((1 - R) * traceRay({p, dir_refract}, EPSILON, bounces + 1, seed) +
-                                    R * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed));
+                {
+                    auto R0 = (eta - 1) * (eta - 1) / (eta + 1) / (eta + 1);
+                    auto c = 1 - fabs(Vector3f::dot(eta > 1 ? dir_refract : incoming, normal));
+                    auto R = R0 + (1 - R0) * c * c * c * c * c;
+                    possibility = 0.25 + R / 2;
+                    if (bounces)
+                        // Mento Carlo by Russian roulette
+                        if (erand48(seed) < possibility)
+                            result += color * R / possibility * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed, Channel(i));
+                        else
+                            result += color * (1 - R) / (1 - possibility) * traceRay({p, dir_refract}, EPSILON, bounces + 1, seed, Channel(i));
+                    else
+                        // trace two direction for the first time
+                        result += color * ((1 - R) * traceRay({p, dir_refract}, EPSILON, bounces + 1, seed, Channel(i)) +
+                                           R * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed, Channel(i)));
+                }
             }
+            return result;
+        }
         default:
             assert(0);
         }

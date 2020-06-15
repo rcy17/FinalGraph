@@ -40,6 +40,14 @@ enum TraceType
     PT
 };
 
+enum Channel
+{
+    RED,
+    GREEN,
+    BLUE,
+    ALL,
+};
+
 class Tracer
 {
 public:
@@ -53,7 +61,7 @@ public:
 
     virtual ~Tracer() = default;
 
-    virtual Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, double currentIndex = 1.f, bool debug = false) const = 0;
+    virtual Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, Channel channel, bool debug = false) const = 0;
 
 protected:
     SceneParser *scene;
