@@ -21,7 +21,7 @@ public:
         Hit hit(FLT_MAX, NULL, Vector3f(0, 0, 0));
         const auto group = scene->getGroup();
 
-        if (!group->intersect(ray, hit, t_min) || bounces >= 100)
+        if (!group->intersect(ray, hit, t_min))
             return scene->getBackgroundColor(ray.getDirection());
 
         auto p = ray.pointAtParameter(hit.getT());
@@ -34,7 +34,7 @@ public:
         double eta = material->getRefractionIndex();
         if (material->getType() == ILLUMINANT)
             return color;
-        double possibility = std::max(std::max(p[0], p[1]), p[2]);
+        double possibility = std::max(std::max(color[0], color[1]), color[2]);
         if (bounces >= max_bounces)
         {
             if (erand48(seed) < possibility)
