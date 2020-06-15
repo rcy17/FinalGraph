@@ -1,0 +1,113 @@
+PerspectiveCamera {
+    center -2 1 -0.2
+    direction 1.5 -0.48 -0.08
+    up 0 1 0
+    angle 33.7
+    width 800
+    height 800
+    distance 1.5
+}
+
+
+Lights {
+    numLights 2
+    PointLight {
+        position 0 1 0.9
+        color 1 1 1
+    }
+    PointLight {
+        position 0 1 -0.9
+        color 1 1 1
+    }
+}
+
+Materials {
+    numMaterials 7
+    Material { 
+        diffuseColor 0.75 0.25 0.25
+        diffuseColor 0.25 0.25 0.25
+    }
+    Material { 
+        diffuseColor 0.25 0.25 0.75
+        diffuseColor 0.25 0.25 0.25
+    }
+    Material { 
+        diffuseColor 1 1 1
+    }
+    Material { 
+        specularColor 0.999 0.999 0.999
+    }
+    Material { 
+        refractionIndex 1.5
+        specularColor 0.999 0.999 0.999
+    }
+    Material { 
+        lightColor 20 20 20
+    }
+    Material {
+        specularColor 0 0 0
+    }
+}
+
+
+
+
+Group {
+    numObjects 9
+    MaterialIndex 0
+    Plane {
+        normal 1 0 0
+        offset -1
+    }
+    MaterialIndex 1
+    Plane {
+        normal -1 0 0
+        offset -1
+    }
+    MaterialIndex 2
+    Plane {
+        normal 0 0 1
+        offset -1
+    }
+
+    Plane {
+        normal 0 1 0
+        offset 0
+    }
+    Plane {
+        normal 0 -1 0
+        offset -2
+    }
+    
+    MaterialIndex 3
+    Sphere {
+        center 27 16.5 47 
+        radius 16.5
+    }
+
+
+    MaterialIndex 4
+    Transform {
+        YRotate  45 
+        Scale 0.55 1.5 0.55
+        Translate 0.4 0 -0.5
+        TriangleMesh {
+            obj_file mesh/prism.obj
+        }
+
+    }
+
+    MaterialIndex 5
+    Sphere {
+        center 0 0.1 60.9999
+        radius 60
+    }
+
+    MaterialIndex 6
+
+    Plane {
+        normal 0 0 -1
+        offset -1
+    }
+
+}
