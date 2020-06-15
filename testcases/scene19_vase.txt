@@ -1,26 +1,18 @@
 PerspectiveCamera {
-    center 3 2 10
-    direction -0.3 0.1 -1
+    center 0 3 15
+    direction 0 0 -1
     up 0 1 0
-    angle 70
+    angle 45
     width 1500
     height 1500
     aperture 10
 }
 
 Lights {
-    numLights 3
-    PointLight {
-        position 0 9 -3
-        color 2 2 2
-    }
-    PointLight {
-        position 0 5 14 
-        color 8 8 11
-    }
+    numLights 1
     DirectionalLight {
-        direction -0.3 0.1 -1
-        color 2 2 2
+        direction 0 0 -1
+        color 1 1 1
     }
 }
 
@@ -29,7 +21,7 @@ Materials {
     
     Material {
         diffuseColor 0.999 0.999 0.999
-        specularColor 0.999 0.999 0.999
+        texture tex/head.bmp
     }
 }
 
@@ -37,17 +29,21 @@ Group {
     numObjects 1
 
     MaterialIndex 0
-    RevSurface {
-        profile BezierCurve {
-            controls
-                [ 1.25     0       0 ]
-                [ 1.75     1.5    0 ]
-                [ 2      2       0 ]
-                [ 1.75     2.5    0 ]
-                [ 1.25     3     0 ]
-                [ 0.8       5     0 ]
-                [ 1      7     0 ]
+    Transform {
+        Scale 2 1 2
+        RevSurface {
+            profile BezierCurve {
+                controls
+                    [ 1.25     0       0 ]
+                    [ 1.75     1.5    0 ]
+                    [ 2      2       0 ]
+                    [ 1.75     2.5    0 ]
+                    [ 1.25     3     0 ]
+                    [ 0.8       5     0 ]
+                    [ 1      7     0 ]
+            }
         }
     }
+    
 
 }
