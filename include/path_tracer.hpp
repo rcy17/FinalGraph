@@ -45,22 +45,34 @@ public:
                 break;
             case REFRACTIVE:
             {
-                const double eps = 1e-2;
-                double eta = material->getRefractionIndex();
-                assert(eta > 1);
-                if (Vector3f::dot(normal, incoming) < 0)
-                    eta = 1 / eta;
+                Vector3f result;
+                // Regard nt as red color's nt, calculate green and blue's
+                // Wave length: red 700 nm, green 546 nm, blue 436 nm
+                double k[3] = {1, 700. / 546, 700. / 436};
+                auto c = material->getSpecularColor();
                 auto reflect_direction = mirrorDirection(normal, incoming);
-                if (!transmittedDirection(normal, incoming, eta, 1, direction))
-                    color = material->getSpecularColor() * traceRay({p, reflect_direction}, EPSILON, bounces + 1, seed);
-                else
+                for (int i = 0; i < 3; i++)
                 {
-                    auto R0 = (eta - 1) * (eta - 1) / (eta + 1) / (eta + 1);
-                    auto c = 1 - fabs(Vector3f::dot(eta > 1 ? direction : incoming, normal));
-                    auto R = R0 + (1 - R0) * c * c * c * c * c;
-                    color = (1 - R) * traceRay({p, direction}, EPSILON, bounces + 1, seed) +
-                            R * traceRay({p, reflect_direction}, EPSILON, bounces + 1, seed) * material->getSpecularColor();
+                    double eta = material->getRefractionIndex();
+                    auto sc = Vector3f::ZERO;
+                    sc[i] = c[i];
+                    assert(eta > 1);
+                    eta *= k[i];
+                    if (Vector3f::dot(normal, incoming) < 0)
+                        eta = 1 / eta;
+                    if (!transmittedDirection(normal, incoming, eta, 1, direction))
+                        color += sc * traceRay({p, reflect_direction}, EPSILON, bounces + 1, seed);
+                    else
+                    {
+                        auto R0 = (eta - 1) * (eta - 1) / (eta + 1) / (eta + 1);
+                        auto c = 1 - fabs(Vector3f::dot(eta > 1 ? direction : incoming, normal));
+                        auto R = R0 + (1 - R0) * c * c * c * c * c;
+                        color += ((1 - R) * traceRay({p, direction}, EPSILON, bounces + 1, seed) +
+                                  R * traceRay({p, reflect_direction}, EPSILON, bounces + 1, seed)) *
+                                 sc;
+                    }
                 }
+
                 break;
             }
             }
