@@ -20,6 +20,7 @@
 #include "transform.hpp"
 #include "mesh.hpp"
 #include "noise.hpp"
+#include "bezier.hpp"
 
 #define MAX_PARSER_TOKEN_LENGTH 1024
 
@@ -96,6 +97,9 @@ private:
     Mesh *parseTriangleMesh();
     Transform *parseTransform();
     CubeMap *parseCubeMap();
+    BezierCurve2D *parseBezierCurve();
+    BezierSurface *parseBezierSurface();
+
     int getToken(char token[MAX_PARSER_TOKEN_LENGTH]);
 
     Vector3f readVector3f();
