@@ -37,7 +37,7 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
 
     const double t_min = camera->getDistance() + EPSILON;
 
-    //#pragma omp parallel for schedule(dynamic, 1)
+#pragma omp parallel for schedule(dynamic, 1)
     for (int y = 0; y < y_range; y++)
     {
         fprintf(stderr, "\rprocessing %5d/%-5d", y, y_range);
@@ -45,7 +45,7 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
         {
             int _y = y + offset;
             bool debug = false;
-            if (_y == 100 && x == 100 && parser.debug)
+            if (_y == 1 && x == 100 && parser.debug)
             {
                 debug = true;
             }
