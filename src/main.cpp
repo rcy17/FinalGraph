@@ -38,29 +38,34 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
     const double t_min = camera->getDistance() + EPSILON;
 
 #pragma omp parallel for schedule(dynamic, 1)
-    for (int y = 0; y < y_range; y++)
+    for (int _y = 0; _y < y_range; _y++)
     {
-        fprintf(stderr, "\rprocessing %5d/%-5d", y, y_range);
+        fprintf(stderr, "\rprocessing %5d/%-5d", _y, y_range);
         for (int x = 0; x < image.Width(); x++)
         {
-            int _y = y + offset;
+            int y = _y + offset;
             bool debug = false;
-            if (_y == 1 && x == 100 && parser.debug)
+            if (y == 1 && x == 100 && parser.debug)
             {
                 debug = true;
             }
             Vector3f color;
-            unsigned short seed[3] = {_y, _y * x, static_cast<unsigned short>(_y * x * _y)};
-            auto dx = erand48(seed) - 0.5;
-            auto dy = erand48(seed) - 0.5;
-            Ray camRay = parser.jitter ? camera->generateRay(Vector2f(x + dx, _y + dy), seed)
-                                       : camera->generateRay(Vector2f(x, _y), seed);
-
-            for (int i = 0; i < parser.spp; i++)
-            {
-                color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
-            }
-            image.SetPixel(x, y, VectorUtils::clamp(color / parser.spp));
+            for (int sy = 0; sy < 2; sy++)
+                for (int sx = 0; sx < 2; sx++)
+                {
+                    unsigned short seed[3] = {
+                        y,
+                        static_cast<unsigned short>(y * x),
+                        static_cast<unsigned short>(y * x * y)};
+                    double r1 = 2 * erand48(seed), dx = r1 < 1 ? sqrt(r1) : 2 - sqrt(2 - r1);
+                    double r2 = 2 * erand48(seed), dy = r2 < 1 ? sqrt(r2) : 2 - sqrt(2 - r2);
+                    Ray camRay = camera->generateRay(Vector2f(x + dx / 2 + sx, y + dy / 2 + sy));
+                    for (int i = 0; i < parser.spp; i++)
+                    {
+                        color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
+                    }
+                }
+            image.SetPixel(x, _y, VectorUtils::clamp(color / parser.spp / 4));
         }
     }
     delete tracer;
@@ -70,7 +75,7 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
 
 Image merge(const ArgParser &parser)
 {
-    Image image(parser.width * (1 + 2 * parser.filter), parser.height * (1 + 2 * parser.filter));
+    Image image(parser.width, parser.height);
     image.Merge(parser.segments);
     return image;
 }
@@ -98,21 +103,7 @@ int main(int argc, char *argv[])
 
     auto image = parser.segments.empty() ? render(parser, &scene, height, width, offset, y_range) : merge(parser);
 
-    if (segment)
-    {
-        // In this case, just save raw data
-        image.SaveRaw(parser.output_file);
-    }
-    else if (parser.filter)
-    {
-        image.GaussianBlur();
-        Image result(image.Width() / 3, image.Height() / 3);
-        image.DownSampling(&result);
-        result.SaveImage(parser.output_file, parser.gamma);
-    }
-    else
-    {
-        image.SaveImage(parser.output_file, parser.gamma);
-    }
+    image.SaveImage(parser.output_file, parser.gamma);
+
     return 0;
 }
