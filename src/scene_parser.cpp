@@ -141,6 +141,8 @@ void SceneParser::parsePerspectiveCamera()
     getToken(token);
     int width = 0, height = 0;
     double distance = 0;
+    bool use_depth = false;
+    double aperture = 0;
     while (strcmp(token, "}"))
     {
         if (!strcmp(token, "width"))
@@ -155,13 +157,21 @@ void SceneParser::parsePerspectiveCamera()
         {
             distance = readFloat();
         }
+        else if (!strcmp(token, "aperture"))
+        {
+            aperture = readFloat();
+            use_depth = true;
+        }
         else
         {
             printf("Ignore token %s\n", token);
         }
         getToken(token);
     }
-    camera = new PerspectiveCamera(center, direction, up, width, height, angle_radians, distance);
+    if (use_depth)
+        camera = new DepthCamera(center, direction, up, width, height, angle_radians, distance, aperture);
+    else
+        camera = new PerspectiveCamera(center, direction, up, width, height, angle_radians, distance);
 }
 
 void SceneParser::parseBackground()

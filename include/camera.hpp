@@ -20,7 +20,7 @@ public:
     }
 
     // Generate rays for each screen-space coordinate
-    virtual Ray generateRay(const Vector2f &point) = 0;
+    virtual Ray generateRay(const Vector2f &point, unsigned short *seed = nullptr) = 0;
     virtual ~Camera() = default;
 
     int getWidth() const { return width; }
@@ -46,35 +46,51 @@ class PerspectiveCamera : public Camera
 {
 
 public:
-    PerspectiveCamera(const Vector3f &center, const Vector3f &direction, const Vector3f &up,
-                      int imgW, int imgH, double angle, double dis) : Camera(center, direction, up, imgW, imgH, dis)
+    PerspectiveCamera(const Vector3f &center, const Vector3f &direction, const Vector3f &up, int imgW,
+                      int imgH, double angle, double dis) : Camera(center, direction, up, imgW, imgH, dis)
     {
         // angle is in radian.
-        f_x = f_y = height / (2 * tan(angle / 2));
-
-        // f_y = height / (2 * tan(angle / 2));
+        f = 1 / (2 * tan(angle / 2));
         this->angle = angle;
     }
 
     void setSize(int width, int height)
     {
         this->width = width, this->height = height;
-        f_x = height / (2 * tan(angle / 2));
-        f_y = f_x;
-        //f_y = height / (2 * tan(angle / 2));
     }
 
-    Ray generateRay(const Vector2f &point) override
+    Ray generateRay(const Vector2f &point, unsigned short *seed = nullptr) override
     {
-        Vector3f ray((point.x() - width / 2) / f_x, (point.y() - height / 2) / f_y, 1);
+        Vector3f ray((point.x() / width - 0.5), (point.y() / height - 0.5), f);
         Matrix3f transform(horizontal, up, direction);
         ray = transform * ray;
         return Ray(center, ray.normalized());
     }
 
-private:
-    double f_x, f_y;
+protected:
+    double f;
     double angle;
+};
+
+class DepthCamera : public PerspectiveCamera
+{
+public:
+    DepthCamera(const Vector3f &center, const Vector3f &direction, const Vector3f &up, int imgW, int imgH, double angle,
+                double dis, double aperture) : PerspectiveCamera(center, direction, up, imgW, imgH, angle, dis), aperture(aperture)
+    {
+    }
+
+    Ray generateRay(const Vector2f &point, unsigned short *seed) override
+    {
+        Vector3f ray((point.x() / width - 0.5), (point.y() / height - 0.5), f);
+        Matrix3f transform(horizontal, up, direction);
+        ray = transform * ray;
+        Vector3f jitter = transform * Vector3f(erand48(seed) - 0.5, erand48(seed) - 0.5, 0) * aperture / 100;
+        return Ray(center, (ray * (center.length() / f) - jitter).normalized());
+    }
+
+protected:
+    double aperture;
 };
 
 #endif //CAMERA_H

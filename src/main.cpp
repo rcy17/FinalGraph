@@ -58,12 +58,12 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
                     auto dx = erand48(seed);
                     auto dy = erand48(seed);
                     double distance;
-                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, _y - 0.5 + dy));
+                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, _y - 0.5 + dy), seed);
                     color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
                 }
                 else
                 {
-                    Ray camRay = camera->generateRay(Vector2f(x, _y));
+                    Ray camRay = camera->generateRay(Vector2f(x, _y), seed);
                     color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
                 }
             }
