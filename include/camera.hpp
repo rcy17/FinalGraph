@@ -61,7 +61,9 @@ public:
 
     Ray generateRay(const Vector2f &point, unsigned short *seed = nullptr) override
     {
-        Vector3f ray((point.x() / width - 0.5), (point.y() / height - 0.5), f);
+        // The two division to height is not BUG, if you have any question, try to divide to width for x
+        // It only matters when height != width
+        Vector3f ray((point.x() - width * 0.5) / height, (point.y() - height * 0.5) / height, f);
         Matrix3f transform(horizontal, up, direction);
         ray = transform * ray;
         return Ray(center, ray.normalized());
@@ -82,7 +84,7 @@ public:
 
     Ray generateRay(const Vector2f &point, unsigned short *seed) override
     {
-        Vector3f ray((point.x() / width - 0.5), (point.y() / height - 0.5), f);
+        Vector3f ray((point.x() - width * 0.5) / height, (point.y() - height * 0.5) / height, f);
         Matrix3f transform(horizontal, up, direction);
         ray = transform * ray;
         Vector3f jitter = transform * Vector3f(erand48(seed) - 0.5, erand48(seed) - 0.5, 0) * aperture / 100;
