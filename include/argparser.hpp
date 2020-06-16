@@ -174,6 +174,9 @@ public:
             // range for distributed calculation
             offset = 0;
             size = 0;
+
+            segments.clear();
+            debug = false;
       }
 
       // ==============
