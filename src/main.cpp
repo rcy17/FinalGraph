@@ -49,19 +49,19 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
             {
                 debug = true;
             }
+            unsigned short seed[3] = {
+                y,
+                static_cast<unsigned short>(y * x),
+                static_cast<unsigned short>(y * x * y)};
             Vector3f color;
             for (int sy = 0; sy < 2; sy++)
                 for (int sx = 0; sx < 2; sx++)
                 {
-                    unsigned short seed[3] = {
-                        y,
-                        static_cast<unsigned short>(y * x),
-                        static_cast<unsigned short>(y * x * y)};
-                    double r1 = 2 * erand48(seed), dx = r1 < 1 ? sqrt(r1) : 2 - sqrt(2 - r1);
-                    double r2 = 2 * erand48(seed), dy = r2 < 1 ? sqrt(r2) : 2 - sqrt(2 - r2);
-                    Ray camRay = camera->generateRay(Vector2f(x + dx / 2 + sx, y + dy / 2 + sy));
                     for (int i = 0; i < parser.spp; i++)
                     {
+                        double r1 = 2 * erand48(seed), dx = r1 < 1 ? sqrt(r1) : 2 - sqrt(2 - r1);
+                        double r2 = 2 * erand48(seed), dy = r2 < 1 ? sqrt(r2) : 2 - sqrt(2 - r2);
+                        Ray camRay = camera->generateRay(Vector2f(x + dx / 2 + sx, y + dy / 2 + sy));
                         color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
                     }
                 }
