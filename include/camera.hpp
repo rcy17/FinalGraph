@@ -86,7 +86,7 @@ public:
         Matrix3f transform(horizontal, up, direction);
         ray = transform * ray;
         Vector3f jitter = transform * Vector3f(erand48(seed) - 0.5, erand48(seed) - 0.5, 0) * aperture / 100;
-        return Ray(center, (ray * (center.length() / f) - jitter).normalized());
+        return Ray(center + jitter, (ray * (center.length() / f) - jitter).normalized());
     }
 
 protected:
