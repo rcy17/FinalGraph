@@ -1,11 +1,11 @@
 PerspectiveCamera {
-    center 0 2 0
-    direction 0 -1 0
-    up 0 0 -1
+    center 0 0.4 1.5
+    direction 0 -0.25 -1
+    up 0 1 0
     angle 45
     width 800
     height 800
-    distance 0.01
+    distance 0.7
 }
 
 Lights {
@@ -19,13 +19,13 @@ Lights {
 Materials {
     numMaterials 7
     Material { 
-        diffuseColor 0.75 0.75 0.75
+        diffuseColor 0.5 0.5 0.5
     }
     Material { 
-        diffuseColor 0.75 0.75 0.75
+        diffuseColor 0.5 0.5 0.5
     }
     Material { 
-        diffuseColor 0.75 0.75 0.75
+        diffuseColor 0.5 0.5 0.5
     }
     Material { 
         specularColor 0.999 0.999 0.999
@@ -37,7 +37,7 @@ Materials {
     Material { 
         lightColor 1 1 1   }
     Material {
-        specularColor 0.75 0.75 0.75
+        diffuseColor 0 0 0
     }
 
 
@@ -65,17 +65,17 @@ Group {
         normal 0 0 1
         offset -1
     }
-
-    Plane {
-        normal 0 1 0
-        offset 0
-    }
     Plane {
         normal 0 -1 0
         offset -2
     }
     
     MaterialIndex 3
+
+    Plane {
+        normal 0 1 0
+        offset 0
+    }
     Sphere {
         center 27 16.5 47 
         radius 16.5
@@ -105,7 +105,7 @@ Group {
 
     MaterialIndex 4
     Transform {
-        Translate 0 1 0
+        Translate 0 0.37 0
         Scale 0.2 0.2 0.2
         XRotate -90
         TriangleMesh {

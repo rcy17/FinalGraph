@@ -74,8 +74,7 @@ public:
             for (int i = start; i < stop; i++)
             {
                 double eta = material->getRefractionIndex() * k[i];
-                auto sc = Vector3f::ZERO;
-                sc[i] = color[i];
+                auto sc = color * CHANNEL_COLOR[i];
                 if (go_in)
                     eta = 1 / eta;
                 if (!transmittedDirection(normal, incoming, eta, 1, dir_refract))
@@ -89,12 +88,12 @@ public:
                     if (bounces)
                         // Mento Carlo by Russian roulette
                         if (erand48(seed) < possibility)
-                            result += color * R / possibility * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed, Channel(i));
+                            result += sc * R / possibility * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed, Channel(i));
                         else
-                            result += color * (1 - R) / (1 - possibility) * traceRay({p, dir_refract}, EPSILON, bounces + 1, seed, Channel(i));
+                            result += sc * (1 - R) / (1 - possibility) * traceRay({p, dir_refract}, EPSILON, bounces + 1, seed, Channel(i));
                     else
                         // trace two direction for the first time
-                        result += color * ((1 - R) * traceRay({p, dir_refract}, EPSILON, bounces + 1, seed, Channel(i)) +
+                        result += sc * ((1 - R) * traceRay({p, dir_refract}, EPSILON, bounces + 1, seed, Channel(i)) +
                                            R * traceRay({p, dir_reflect}, EPSILON, bounces + 1, seed, Channel(i)));
                 }
             }
@@ -106,9 +105,6 @@ public:
     }
 
 private:
-    bool randomStop(Vector3f color)
-    {
-    }
 };
 
 #endif // RAY_TRACER_H
