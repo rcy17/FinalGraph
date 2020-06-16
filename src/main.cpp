@@ -51,21 +51,14 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
             }
             Vector3f color;
             unsigned short seed[3] = {_y, _y * x, static_cast<unsigned short>(_y * x * _y)};
+            auto dx = erand48(seed) - 0.5;
+            auto dy = erand48(seed) - 0.5;
+            Ray camRay = parser.jitter ? camera->generateRay(Vector2f(x + dx, _y + dy), seed)
+                                       : camera->generateRay(Vector2f(x, _y), seed);
+
             for (int i = 0; i < parser.spp; i++)
             {
-                if (parser.jitter)
-                {
-                    auto dx = erand48(seed);
-                    auto dy = erand48(seed);
-                    double distance;
-                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, _y - 0.5 + dy), seed);
-                    color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
-                }
-                else
-                {
-                    Ray camRay = camera->generateRay(Vector2f(x, _y), seed);
-                    color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
-                }
+                color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
             }
             image.SetPixel(x, y, VectorUtils::clamp(color / parser.spp));
         }
