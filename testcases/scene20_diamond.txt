@@ -8,115 +8,128 @@ PerspectiveCamera {
 }
 
 Lights {
-    numLights 1
+    numLights 2
     PointLight {
         position 0 1 0.999
         color 1 1 1
     }
+    PointLight {
+        position 0 -1 0.999
+        color 0.4 0.4 0.4
+    }
 }
 
 Materials {
-    numMaterials 8
+    numMaterials 9
     Material { 
         diffuseColor 0.5 0.5 0.5
-    }
-    Material { 
-        diffuseColor 0.5 0.5 0.5
+        texture tex/church2/down.bmp
     }
     Material { 
         diffuseColor 0.5 0.5 0.5
+        texture tex/church2/down.bmp
     }
     Material { 
-        specularColor 0.999 0.999 0.999
+        diffuseColor 0.5 0.5 0.5
+        texture tex/church/up.bmp
     }
-    Material { 
-        refractionIndex 2.417
-        specularColor 0.995 0.995 0.995
-    }
-    Material { 
-        lightColor 1 1 1   
+    Material {
+        diffuseColor 0.886 0.761 0.580
+        specularColor 0.5 0.5 0.5
     }
 
+    Material { 
+        diffuseColor 0.5 0.5 0.5
+        texture tex/church2/down.bmp
+    }
     Material {
         diffuseColor 0 0 0
     }
 
+
+    Material { 
+        lightColor 1 1 1   
+    }
+
     PhongMaterial {
-	    specularColor 0.1 0.1 0.5
+        specularColor 0.1 0.1 0.5
         diffuseColor 1 1 1
         refractionIndex 1.33
         Noise {
 			color 0.1 0.2 0.3
 			color 0.2 0.4 0.6
-			octaves 8
-			frequency 8
-			amplitude 6
+			octaves 4
+			frequency 4
+			amplitude 4
 		}
     }
 
-
+    Material { 
+        refractionIndex 2.417
+        specularColor 0.995 0.995 0.995
+    }
 
 
 
 }
 
 Group {
-    numObjects 11
+    numObjects 9
 
     MaterialIndex 0
     Plane {
         normal 1 0 0
         offset -1
+        scale 2
     }
     MaterialIndex 1
     Plane {
         normal -1 0 0
         offset -1
+        scale 2
     }
+
     MaterialIndex 2
-    Plane {
-        normal 0 0 1
-        offset -4
-    }
     Plane {
         normal 0 -1 0
         offset -2
+        scale 4
+        center 1 2 -2
     }
-    
-    MaterialIndex 3
 
+    MaterialIndex 3
     Plane {
         normal 0 1 0
-        offset 0
-    }
-    Sphere {
-        center 27 16.5 47 
-        radius 16.5
+        offset -100
     }
 
-
-    MaterialIndex 4
-    Sphere {
-        center 27 16.5 47 
-        radius 16.5
+    MaterialIndex 4    
+    Plane {
+        normal 0 0 1
+        offset -2
+        scale 2
     }
 
     MaterialIndex 5
-    Sphere {
-        center 0 61.9995 0
-        radius 60
-    }
-
-    MaterialIndex 6
 
     Plane {
         normal 0 0 -1
         offset -2
     }
 
+    MaterialIndex 6
+    Sphere {
+        center 0 61.9995 0
+        radius 60
+    }
 
+    MaterialIndex 7
+    Plane {
+        normal 0 1 0
+        offset 0.2
+    }
 
-    MaterialIndex 4
+    MaterialIndex 8
     Transform {
         Translate 0 0.47 0
         Scale 0.2 0.2 0.2
@@ -126,11 +139,6 @@ Group {
         }
     }
 
-    MaterialIndex 7
-    Plane {
-        normal 0 1 0
-        offset 0.1
-    }
     
 
 }

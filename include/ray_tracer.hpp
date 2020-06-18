@@ -76,7 +76,7 @@ public:
                 {
                     double n = 1;
                     double nt = material->getRefractionIndex();
-                    if (Vector3f::dot(normal, incoming) < 0)
+                    if (Vector3f::dot(normal, incoming) > 0)
                         swap(n, nt);
 
                     if (transmittedDirection(normal, incoming, n, nt, direction))
