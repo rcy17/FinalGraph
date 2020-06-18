@@ -100,6 +100,10 @@ public:
                         assert(i < argc);
                         spp = atoi(argv[i]);
                   }
+                  else if (!strcmp(argv[i], "-disperse"))
+                  {
+                        type = DISPERSE;
+                  }
 
                   // gamma correction
                   else if (!strcmp(argv[i], "-gamma"))

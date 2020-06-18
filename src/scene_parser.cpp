@@ -239,6 +239,10 @@ void SceneParser::parseLights()
         {
             lights[count] = parsePointLight();
         }
+        else if (strcmp(token, "SunLight") == 0)
+        {
+            lights[count] = parseSunLight();
+        }
         else
         {
             printf("Unknown token in parseLight: '%s'\n", token);
@@ -295,6 +299,23 @@ Light *SceneParser::parsePointLight()
     }
     return new PointLight(position, color, falloff);
 }
+
+Light *SceneParser::parseSunLight()
+{
+    char token[MAX_PARSER_TOKEN_LENGTH];
+    getToken(token);
+    assert(!strcmp(token, "{"));
+    getToken(token);
+    assert(!strcmp(token, "direction"));
+    Vector3f direction = readVector3f();
+    getToken(token);
+    assert(!strcmp(token, "color"));
+    Vector3f color = readVector3f();
+    getToken(token);
+    assert(!strcmp(token, "}"));
+    return new SunLight(direction, color);
+}
+
 // ====================================================================
 // ====================================================================
 

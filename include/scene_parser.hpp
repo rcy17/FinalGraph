@@ -85,6 +85,7 @@ private:
     void parseLights();
     Light *parsePointLight();
     Light *parseDirectionalLight();
+    Light *parseSunLight();
     void parseMaterials();
     Material *parseMaterial();
     Noise *parseNoise();

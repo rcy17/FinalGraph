@@ -4,6 +4,7 @@
 #include <vecmath.h>
 
 #include "object3d.hpp"
+#include "color.hpp"
 
 class Light
 {
@@ -68,6 +69,34 @@ public:
 private:
     double falloff;
     Vector3f position;
+    Vector3f color;
+};
+
+class SunLight : public Light
+{
+public:
+    SunLight() = delete;
+
+    SunLight(const Vector3f &d, const Vector3f &c)
+    {
+        direction = d.normalized();
+        color = c;
+    }
+
+    ~SunLight() override = default;
+    ///@param p unsed in this function
+    ///@param distanceToLight not well defined because it's not a point light
+    virtual void getIllumination(const Vector3f &p, Vector3f &dir, Vector3f &col, double &distanceToLight) const
+    {
+        // the direction to the light is the opposite of the
+        // direction of the directional light source
+        dir = -direction;
+        col = ColorConverter::waveLengthToRGB(distanceToLight);
+        distanceToLight = FLT_MAX;
+    }
+
+private:
+    Vector3f direction;
     Vector3f color;
 };
 

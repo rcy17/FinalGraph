@@ -15,7 +15,7 @@
 #include "vector_utils.hpp"
 #include "ray_tracer.hpp"
 #include "path_tracer.hpp"
-#include "color.hpp"
+#include "disperse_tracer.hpp"
 using namespace std;
 
 Image render(const ArgParser &parser, SceneParser *scene, int height, int width, int offset, int y_range)
@@ -30,7 +30,10 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
         tracer = new RayTracer(scene, parser.bounces, parser.shadows, parser.refractions);
         break;
     case PT:
-        tracer = new PathTracer(scene, parser.bounces, parser.shadows, parser.refractions);
+        tracer = new PathTracer(scene, parser.bounces);
+        break;
+    case DISPERSE:
+        tracer = new DisperseTracer(scene, parser.bounces);
         break;
     }
 
