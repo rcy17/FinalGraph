@@ -332,9 +332,14 @@ void Image::SaveImage(const char *filename, bool gamma)
     {
         SaveBMP(filename, gamma);
     }
+    else if (strcmp(".tga", filename + len - 4) == 0)
+    {
+
+        SaveTGA(filename, gamma);
+    }
     else
     {
-        SaveTGA(filename, gamma);
+        SaveRaw(filename);
     }
 }
 

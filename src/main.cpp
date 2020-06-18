@@ -54,22 +54,20 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
                 static_cast<unsigned short>(y * x),
                 static_cast<unsigned short>(y * x * y)};
             Vector3f color;
-            for (int sy = 0; sy < 2; sy++)
-                for (int sx = 0; sx < 2; sx++)
-                {
-                    for (int i = 0; i < parser.spp; i++)
-                    {
-                        double r1 = 2 * erand48(seed), dx = r1 < 1 ? sqrt(r1) : 2 - sqrt(2 - r1);
-                        double r2 = 2 * erand48(seed), dy = r2 < 1 ? sqrt(r2) : 2 - sqrt(2 - r2);
-                        Ray camRay = camera->generateRay(Vector2f(x + dx / 2 + sx, y + dy / 2 + sy));
-                        color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
-                    }
-                }
-            image.SetPixel(x, _y, VectorUtils::clamp(color / parser.spp / 4));
+
+            for (int i = 0; i < parser.spp; i++)
+            {
+                double r1 = 2 * erand48(seed), dx = r1 < 1 ? sqrt(r1) : 2 - sqrt(2 - r1);
+                double r2 = 2 * erand48(seed), dy = r2 < 1 ? sqrt(r2) : 2 - sqrt(2 - r2);
+                Vector2f position(parser.jitter ? x - 0.5 + dx : x, parser.jitter ? _y - 0.5 + dy : _y);
+                Ray camRay = camera->generateRay(position);
+                color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
+            }
+            image.SetPixel(x, _y, VectorUtils::clamp(color / parser.spp));
         }
     }
-    delete tracer;
     fprintf(stderr, "\rprocessing %5d/%-5d\n", y_range, y_range);
+    delete tracer;
     return image;
 }
 
@@ -103,7 +101,16 @@ int main(int argc, char *argv[])
 
     auto image = parser.segments.empty() ? render(parser, &scene, height, width, offset, y_range) : merge(parser);
 
-    image.SaveImage(parser.output_file, parser.gamma);
-
+    if (parser.filter)
+    {
+        image.GaussianBlur();
+        Image result(image.Width() / 3, image.Height() / 3);
+        image.DownSampling(&result);
+        result.SaveImage(parser.output_file, parser.gamma);
+    }
+    else
+    {
+        image.SaveImage(parser.output_file, parser.gamma);
+    }
     return 0;
 }

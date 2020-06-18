@@ -79,6 +79,16 @@ public:
                         refractions = 1;
                   }
 
+                  // supersampling
+                  else if (strcmp(argv[i], "-jitter") == 0)
+                  {
+                        jitter = 1;
+                  }
+                  else if (strcmp(argv[i], "-filter") == 0)
+                  {
+                        filter = 1;
+                  }
+
                   // path tracer
                   else if (strcmp(argv[i], "-pt") == 0)
                   {
@@ -134,8 +144,9 @@ public:
 
             if ((offset || size))
             {
-                  assert(strcmp(".bmp", output_file + strlen(output_file) - 4) &&
-                         "Distributed method only support tga, but you request bmp\n");
+                  assert(!filter && "Filter is forbidden when you're using distributed calculation!\n");
+                  if (jitter)
+                        offset *= 3, size *= 3;
             }
             assert((segments.empty() || set_size) && "Merge file must provide size\n");
             assert(segments.size() || input_file && "No input provided!\n");
