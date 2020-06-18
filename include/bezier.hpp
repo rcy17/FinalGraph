@@ -33,9 +33,8 @@ public:
 		v:		控制点坐标
 		n:		控制点数量
 		num:	Bezier曲线次数
-		r:		微小扰动
 	*/
-    BezierCurve2D(Vector2f *v, int n, int num, double r = 0.365) : num(num), n(n), r(r)
+    BezierCurve2D(Vector2f *v, int n, int num) : num(num), n(n), r(r)
     {
         double *px = new double[n];
         double *py = new double[n];
@@ -72,8 +71,8 @@ public:
         for (int cnt = 0; cnt <= num; c += interval, ++cnt)
         {
             data[cnt].width = 0;
-            data[cnt].t0 = fmax(0., c - r);
-            data[cnt].t1 = fmin(1., c + r);
+            data[cnt].t0 = fmax(0., c - interval);
+            data[cnt].t1 = fmin(1., c + interval);
             data[cnt].y0 = getValue(data[cnt].t0).y();
             data[cnt].y1 = getValue(data[cnt].t1).y();
             for (double t = data[cnt].t0; t <= data[cnt].t1; t += 0.00001)
@@ -128,24 +127,7 @@ public:
         }
         return Vector2f(ans_x, ans_y);
     }
-
-    /*
-		获得Bezier曲线在t的二阶导数
-	*/
-    Vector2f getTangent2(double t)
-    {
-        double ans_x = 0, ans_y = 0, t_pow = 1;
-        for (int i = 2; i <= n; ++i)
-        {
-            ans_x += dx[i] * i * (i - 1) * t_pow;
-            ans_y += dy[i] * i * (i - 1) * t_pow;
-            t_pow *= t;
-        }
-        return Vector2f(ans_x, ans_y);
-    }
 };
-
-const double INF = 1e10;
 
 #define sqr(a) ((a) * (a))
 #define fmax(a, b) ((a) > (b) ? (a) : (b))
@@ -304,7 +286,7 @@ public:
 
     bool intersect(const Ray &ray, Hit &h, double tmin) override
     {
-        double final_dis = INF;
+        double final_dis = FLT_MAX;
         // check for |dy|<EPS
         if (std::fabs(ray.getDirection().y()) < EPS)
         {
@@ -389,7 +371,7 @@ public:
             check(t0, t1, (t1 + t0) / 2, ray, a, b, c, final_dis);
         }
 
-        if (final_dis < INF / 2 && final_dis >= tmin && final_dis < h.getT())
+        if (final_dis < FLT_MAX / 2 && final_dis >= tmin && final_dis < h.getT())
         {
             Vector2f tmp = change_for_bezier(ray.pointAtParameter(final_dis));
             if (tmp.x() >= -1e5 && tmp.x() <= 1e5 && tmp.y() >= -1e5 && tmp.y() <= 1e5)
