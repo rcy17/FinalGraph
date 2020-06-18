@@ -31,6 +31,7 @@ SET(PA5_INCLUDES
         include/argparser.hpp
         include/bitmap_image.hpp
         include/camera.hpp
+        include/color.hpp
         include/cube_map.hpp
         include/group.hpp
         include/hit.hpp

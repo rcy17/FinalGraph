@@ -4,6 +4,7 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
+#include <string>
 
 #include "argparser.hpp"
 #include "scene_parser.hpp"
@@ -14,9 +15,7 @@
 #include "vector_utils.hpp"
 #include "ray_tracer.hpp"
 #include "path_tracer.hpp"
-
-#include <string>
-
+#include "color.hpp"
 using namespace std;
 
 Image render(const ArgParser &parser, SceneParser *scene, int height, int width, int offset, int y_range)
