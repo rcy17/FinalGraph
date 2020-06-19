@@ -64,7 +64,6 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
                 {
                     auto dx = erand48(seed);
                     auto dy = erand48(seed);
-                    double distance;
                     Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, _y - 0.5 + dy));
                     color += tracer->traceRay(camRay, t_min, 0, seed, ALL, debug);
                 }
@@ -108,7 +107,6 @@ int main(int argc, char *argv[])
 
     int offset = parser.offset;
     int y_range = (parser.size ? parser.size : height - offset);
-    bool segment = y_range != height;
 
     auto image = parser.segments.empty() ? render(parser, &scene, height, width, offset, y_range) : merge(parser);
 

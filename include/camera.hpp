@@ -20,7 +20,7 @@ public:
     }
 
     // Generate rays for each screen-space coordinate
-    virtual Ray generateRay(const Vector2f &point, unsigned short *seed = nullptr) = 0;
+    virtual Ray generateRay(const Vector2f &point, unsigned short *seed = nullptr) const = 0;
     virtual ~Camera() = default;
 
     int getWidth() const { return width; }
@@ -59,7 +59,7 @@ public:
         this->width = width, this->height = height;
     }
 
-    Ray generateRay(const Vector2f &point, unsigned short *seed = nullptr) override
+    Ray generateRay(const Vector2f &point, unsigned short *seed = nullptr) const override
     {
         // The two division to height is not BUG, if you have any question, try to divide to width for x
         // It only matters when height != width
@@ -82,7 +82,7 @@ public:
     {
     }
 
-    Ray generateRay(const Vector2f &point, unsigned short *seed) override
+    Ray generateRay(const Vector2f &point, unsigned short *seed) const override
     {
         Vector3f ray((point.x() - width * 0.5) / height, (point.y() - height * 0.5) / height, f);
         Matrix3f transform(horizontal, up, direction);

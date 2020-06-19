@@ -27,7 +27,7 @@ struct OctNode
 		child[0] = nullptr;
 	}
 	///@brief is this terminal
-	bool isTerm()
+	bool isTerm() const
 	{
 		return child[0] == nullptr;
 	}
@@ -35,12 +35,12 @@ struct OctNode
 };
 struct IntersectRecorder
 {
-	Mesh *m;
+	const Mesh *m;
 	const Ray &ray;
 	Hit &hit;
 	double t_min;
 	bool result;
-	IntersectRecorder(Mesh *m, const Ray &ray, Hit &hit, double t_min)
+	IntersectRecorder(const Mesh *m, const Ray &ray, Hit &hit, double t_min)
 		: m(m), ray(ray), hit(hit), t_min(t_min), result(false)
 	{
 	}
@@ -66,9 +66,9 @@ struct Octree
 
 	///@brief indexing
 	void proc_subtree(double tx0, double ty0, double tz0, double tx1, double ty1, double tz1,
-					  OctNode *node, unsigned char aa, IntersectRecorder &f);
+					  const OctNode *node, unsigned char aa, IntersectRecorder &f) const;
 
-	void intersect(const Ray &ray, IntersectRecorder &f);
+	void intersect(const Ray &ray, IntersectRecorder &f) const;
 };
 Octree buildOctree(const Mesh &m, int maxLevel = 7);
 #endif

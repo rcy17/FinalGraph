@@ -25,7 +25,7 @@ public:
 
     ~Sphere() override = default;
 
-    bool intersect(const Ray &r, Hit &h, double t_min) override
+    bool intersect(const Ray &r, Hit &h, double t_min) const override
     {
         auto l = center - r.getOrigin();
         auto l_square = l.squaredLength();

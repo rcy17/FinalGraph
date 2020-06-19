@@ -221,7 +221,7 @@ bool IntersectRecorder::operator()(int idx)
 }
 
 void Octree::proc_subtree(double tx0, double ty0, double tz0, double tx1, double ty1, double tz1,
-						  OctNode *node, unsigned char aa, IntersectRecorder &f)
+						  const OctNode *node, unsigned char aa, IntersectRecorder &f) const
 {
 	double txm, tym, tzm;
 	int currNode;
@@ -298,7 +298,7 @@ void Octree::proc_subtree(double tx0, double ty0, double tz0, double tx1, double
 	} while (currNode < 8);
 }
 
-void Octree::intersect(const Ray &ray, IntersectRecorder &f)
+void Octree::intersect(const Ray &ray, IntersectRecorder &f) const
 {
 	Vector3f rd = ray.getDirection();
 	//assumes rd normalized

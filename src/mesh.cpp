@@ -10,7 +10,7 @@
 
 #define SMOOTH (v.size() > 100)
 
-bool Mesh::intersect(const Ray &r, Hit &h, double t_min)
+bool Mesh::intersect(const Ray &r, Hit &h, double t_min) const
 {
     /*bool result = false;
     for (unsigned int i = 0; i < t.size(); i++)
@@ -37,13 +37,11 @@ bool Mesh::intersect(const Ray &r, Hit &h, double t_min)
     octree.intersect(r, func);
     return func.result;
 }
-bool Mesh::intersectTrig(int idx, const Ray &r, Hit &h, double t_min)
+bool Mesh::intersectTrig(int idx, const Ray &r, Hit &h, double t_min) const
 {
     bool result = false;
     Triangle triangle(v[t[idx][0]], v[t[idx][1]], v[t[idx][2]], material);
 
-    //some shitty hack
-    //change at will
     if (hasNormal)
     {
         for (int jj = 0; jj < 3; jj++)

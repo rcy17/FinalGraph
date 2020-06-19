@@ -19,7 +19,7 @@
 class BezierCurve2D
 {
 public:
-    double *dx, *dy, max, height, max2, r, num;
+    double *dx, *dy, max, height, max2, num;
     int n;
     struct D
     {
@@ -33,9 +33,8 @@ public:
 		v:		控制点坐标
 		n:		控制点数量
 		num:	Bezier曲线次数
-		r:		微小扰动
 	*/
-    BezierCurve2D(Vector2f *v, int n, int num, double r = 0.1) : num(num), n(n), r(r)
+    BezierCurve2D(Vector2f *v, int n, int num) : num(num), n(n)
     {
         double *px = new double[n];
         double *py = new double[n];
@@ -143,7 +142,7 @@ private:
     /*
         解方程y(t) = yc，返回t
     */
-    double solve_t(double yc)
+    double solve_t(double yc) const
     {
         // assert(0 <= yc && yc <= curve->height);
         double t = 0.5, ft, dft;
@@ -164,7 +163,7 @@ private:
     /*
         给定一个在曲面上的点p，返回它在曲线上的参数 (theta, t)
     */
-    virtual Vector2f change_for_bezier(Vector3f inter_p)
+    virtual Vector2f change_for_bezier(Vector3f inter_p) const
     {
         double t = solve_t(inter_p.y() - pivot.y());
         double theta = atan2(inter_p.z() - pivot.z(), inter_p.x() - pivot.x()); // between -pi ~ pi
@@ -177,7 +176,7 @@ private:
         返回射线ray 和球(o, r)的交点的t值 即 ray.pointAtParameter(t) 在球上
         如果没有交点 返回-1 
     */
-    double get_sphere_intersect(Ray ray, Vector3f o, double r)
+    double get_sphere_intersect(Ray ray, Vector3f o, double r) const
     {
         Vector3f ro = o - ray.getOrigin();
         double b = Vector3f::dot(ray.getNormalizedDirection(), ro);
@@ -192,16 +191,18 @@ private:
         return t / ray.getDirectionLength();
     }
 
-    bool check(double low, double upp, double init, Ray ray, double a, double b, double c, double &final_dis)
+    bool check(double low, double upp, double init, Ray ray,
+               double a, double b, double c, double &final_dis) const
     {
         double t = newton(init, a, b, c, low, upp);
         if (t <= 0 || t >= 1)
             return false;
         Vector2f loc = curve->getValue(t);
-        double x = loc.x(), y = loc.y();
-        double ft = x - sqrt(a * sqr(y - b) + c);
+        //double x = loc.x();
+        double y = loc.y();
+        //double ft = x - sqrt(a * sqr(y - b) + c);
         double dis = (pivot.y() + y - ray.getOrigin().y()) / ray.getDirection().y();
-        Vector3f inter_p = ray.pointAtParameter(dis);
+        //Vector3f inter_p = ray.pointAtParameter(dis);
         if (dis < final_dis)
         {
             final_dis = dis;
@@ -213,7 +214,8 @@ private:
     /*
 		牛顿迭代法求零点
 	*/
-    double newton(double t, double a, double b, double c, double low = EPS, double upp = 1 - EPS)
+    double newton(double t, double a, double b, double c,
+                  double low = EPS, double upp = 1 - EPS) const
     {
         // solve sqrt(a(y(t)+pivot.y-b)^2+c)=x(t)
         // f(t) = x(t) - sqrt(a(y(t)+pivot.y-b)^2+c)
@@ -245,7 +247,7 @@ private:
 		return 1	外侧
 		return 0	旋转轴
 	*/
-    int getSide(Ray r)
+    int getSide(Ray r) const
     {
         Vector3f o = r.getOrigin();
         Vector3f oo = Vector3f(pivot.x(), o.y(), pivot.z());
@@ -261,7 +263,7 @@ private:
         给定一个在曲面上的点p，求该处的法线方向
 		side=1表示外侧，side=0表示内侧
     */
-    virtual Vector3f norm(Vector3f p, int side = 1)
+    virtual Vector3f norm(Vector3f p, int side = 1) const
     {
         Vector2f tmp = change_for_bezier(p);
         Vector2f dir = curve->getTangent(tmp.y());
@@ -275,7 +277,7 @@ private:
 
 public:
     // the curve will rotate line (x=pivot.x and z=pivot.z) as pivot
-    BezierSurface(BezierCurve2D *pCurve, Material *material) : curve(pCurve), Object3D(material)
+    BezierSurface(BezierCurve2D *pCurve, Material *material) : Object3D(material), curve(pCurve)
     {
         pivot = Vector3f(0, 0, 0);
     }
@@ -285,7 +287,7 @@ public:
         delete curve;
     }
 
-    bool intersect(const Ray &ray, Hit &h, double tmin) override
+    bool intersect(const Ray &ray, Hit &h, double tmin) const override
     {
         double final_dis = FLT_MAX;
         // check for |dy|<EPS

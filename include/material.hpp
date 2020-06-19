@@ -34,7 +34,7 @@ public:
     virtual ~Material() = default;
 
     Vector3f Shade(const Ray &ray, const Hit &hit,
-                   const Vector3f &dirToLight, const Vector3f &lightColor)
+                   const Vector3f &dirToLight, const Vector3f &lightColor) const
     {
         Vector3f kd;
         if (hit.hasTex && t.valid())
@@ -53,11 +53,11 @@ public:
         {
             kd = noise.getColor(ray.getOrigin() + ray.getDirection() * hit.getT());
         }
-        Vector3f color = clampedDot(dirToLight, n) * pointwiseDot(lightColor, kd);
+        Vector3f color = clampedDot(dirToLight, n) * lightColor * kd;
         return color;
     }
 
-    Vector3f colorCorrect(const Ray &ray, const Hit &hit)
+    Vector3f colorCorrect(const Ray &ray, const Hit &hit) const
     {
         if (hit.hasTex && t.valid())
         {
@@ -71,8 +71,6 @@ public:
         }
         return Vector3f(1.);
     }
-
-    static Vector3f pointwiseDot(const Vector3f &v1, const Vector3f &v2) { return Vector3f(v1[0] * v2[0], v1[1] * v2[1], v1[2] * v2[2]); }
 
     static double clampedDot(const Vector3f &L, const Vector3f &N) { return std::max<double>(Vector3f::dot(L, N), 0.); }
     void loadTexture(const char *filename) { t.load(filename); }

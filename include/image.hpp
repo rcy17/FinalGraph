@@ -87,7 +87,7 @@ private:
     int height;
     Vector3f *data;
 
-    const Vector3f GetClampPixel(int x, int y)
+    const Vector3f GetClampPixel(int x, int y) const
     {
         if (x < 0)
             x = 0;

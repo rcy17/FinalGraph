@@ -37,7 +37,6 @@ public:
             color = color * CHANNEL_COLOR[channel];
         Vector3f dir_reflect = mirrorDirection(normal, incoming);
         Vector3f dir_refract;
-        double eta = material->getRefractionIndex();
         if (material->getType() == ILLUMINANT)
             return color;
         double possibility = std::max(std::max(color[0], color[1]), color[2]);
@@ -64,7 +63,6 @@ public:
             // Related to Na yellow
             double k[3] = {589. / 700, 589. / 546, 589. / 436};
             //double k[3] = {1, 1, 1};
-            auto reflect_direction = mirrorDirection(normal, incoming);
             auto result = Vector3f::ZERO;
             bool go_in = Vector3f::dot(normal, incoming) < 0;
             int start = 0, stop = 3;

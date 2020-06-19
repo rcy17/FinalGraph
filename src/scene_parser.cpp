@@ -405,7 +405,6 @@ Noise *SceneParser::parseNoise()
     double amplitude = 1;
     getToken(token);
     assert(!strcmp(token, "{"));
-    Noise *noise = 0;
     while (1)
     {
         getToken(token);
@@ -742,7 +741,7 @@ BezierCurve2D *SceneParser::parseBezierCurve()
         }
     }
     Vector2f *controls2d = new Vector2f[controls.size()];
-    for (int i = 0; i < controls.size(); ++i)
+    for (size_t i = 0; i < controls.size(); ++i)
         controls2d[i] = Vector2f(controls[i].x(), controls[i].y());
     BezierCurve2D *answer = new BezierCurve2D(controls2d, controls.size(), controls.size());
     delete[] controls2d;

@@ -42,7 +42,7 @@ public:
 
     ~Plane() override = default;
 
-    bool intersect(const Ray &r, Hit &h, double t_min) override
+    bool intersect(const Ray &r, Hit &h, double t_min) const override
     {
         auto t = -(Vector3f::dot(normal, r.getOrigin()) - d) /
                  (Vector3f::dot(normal, r.getDirection()));
@@ -71,7 +71,7 @@ protected:
     double scale;
 
 private:
-    Vector2f getTexCoord(const Vector3f &p)
+    Vector2f getTexCoord(const Vector3f &p) const
     {
         double u = Vector3f::dot(p, base[0]) / scale;
         u -= floor(u);
