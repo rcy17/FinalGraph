@@ -8,8 +8,7 @@ class PathTracer : public Tracer
 public:
     PathTracer() = delete;
 
-    PathTracer(SceneParser *scene, int max_bounces, bool shadow,
-               bool refract) : Tracer(scene, max_bounces, shadow, refract)
+    PathTracer(SceneParser *scene, int max_bounces) : Tracer(scene, max_bounces, true, true)
     {
     }
 

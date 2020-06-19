@@ -8,8 +8,7 @@ class ChannelTracer : public Tracer
 public:
     ChannelTracer() = delete;
 
-    ChannelTracer(SceneParser *scene, int max_bounces, bool shadow,
-                  bool refract) : Tracer(scene, max_bounces, shadow, refract)
+    ChannelTracer(SceneParser *scene, int max_bounces) : Tracer(scene, max_bounces, true, true)
     {
     }
 

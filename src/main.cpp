@@ -31,7 +31,10 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
         tracer = new RayTracer(scene, parser.bounces, parser.shadows, parser.refractions);
         break;
     case PT:
-        tracer = new PathTracer(scene, parser.bounces, parser.shadows, parser.refractions);
+        tracer = new PathTracer(scene, parser.bounces);
+        break;
+    case CT:
+        tracer = new ChannelTracer(scene, parser.bounces);
         break;
     }
 
