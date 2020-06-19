@@ -37,7 +37,8 @@ inline bool transmittedDirection(const Vector3f &normal, const Vector3f &incomin
 enum TraceType
 {
     RT,
-    PT
+    PT,
+    CT,
 };
 
 enum Channel

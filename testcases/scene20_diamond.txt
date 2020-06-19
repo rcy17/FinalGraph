@@ -138,7 +138,6 @@ Group {
             obj_file mesh/diamond.obj
         }
     }
-
     
 
 }

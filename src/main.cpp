@@ -4,6 +4,7 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
+#include <string>
 
 #include "argparser.hpp"
 #include "scene_parser.hpp"
@@ -14,8 +15,7 @@
 #include "vector_utils.hpp"
 #include "ray_tracer.hpp"
 #include "path_tracer.hpp"
-
-#include <string>
+#include "channel_tracer.hpp"
 
 using namespace std;
 

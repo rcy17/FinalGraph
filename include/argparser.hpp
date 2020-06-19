@@ -101,6 +101,12 @@ public:
                         spp = atoi(argv[i]);
                   }
 
+                  // channel tracer
+                  else if (strcmp(argv[i], "-ct") == 0)
+                  {
+                        type = CT;
+                  }
+
                   // gamma correction
                   else if (!strcmp(argv[i], "-gamma"))
                   {
@@ -185,6 +191,8 @@ public:
             // range for distributed calculation
             offset = 0;
             size = 0;
+
+            debug = false;
       }
 
       // ==============
