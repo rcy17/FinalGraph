@@ -571,9 +571,21 @@ Plane *SceneParser::parsePlane()
     assert(!strcmp(token, "offset"));
     double offset = readFloat();
     getToken(token);
+    double scale = 1.0;
+    if (!strcmp(token, "scale"))
+    {
+        scale = readFloat();
+        getToken(token);
+    }
+    Vector3f center = normal * offset;
+    if (!strcmp(token, "center"))
+    {
+        center = readVector3f();
+        getToken(token);
+    }
     assert(!strcmp(token, "}"));
     assert(current_material != NULL);
-    return new Plane(normal, offset, current_material);
+    return new Plane(normal, offset, current_material, center, scale);
 }
 
 Triangle *SceneParser::parseTriangle()

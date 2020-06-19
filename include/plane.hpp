@@ -15,8 +15,29 @@ public:
     {
     }
 
-    Plane(const Vector3f &normal, double d, Material *m) : Object3D(m), normal(normal), d(d)
+    Plane(const Vector3f &normal, double d, Material *m, const Vector3f &center,
+          double scale = 1.) : Object3D(m), normal(normal), d(d), scale(scale), center(center)
     {
+        // Some dirty work to deal with plane's texture
+        if (abs(normal[0]) < EPS)
+        {
+            base[0] = Vector3f(1, 0, 0);
+            hasTex = true;
+        }
+        else if (abs(normal[1]) < EPS)
+        {
+            base[0] = Vector3f(0, 1, 0);
+            hasTex = true;
+        }
+        else if (abs(normal[2]) < EPS)
+        {
+            base[0] = Vector3f(0, 0, 1);
+            hasTex = true;
+        }
+        if (hasTex)
+        {
+            base[1] = Vector3f::cross(base[0], normal);
+        }
     }
 
     ~Plane() override = default;
@@ -27,14 +48,37 @@ public:
                  (Vector3f::dot(normal, r.getDirection()));
         if (t > h.getT() || t < t_min || t < 0)
             return false;
-        //h.set(t, material, Vector3f::dot(r.getDirection(), normal) < 0 ? normal : -normal);
         h.set(t, material, normal);
+        if (normal[0] < -0.5)
+        {
+            int a = 2;
+            a++;
+        }
+        if (hasTex)
+        {
+            h.hasTex = true;
+            h.texCoord = getTexCoord(r.pointAtParameter(t) - center);
+        }
         return true;
     }
 
 protected:
     Vector3f normal;
     double d;
+    Vector3f center;
+    bool hasTex;
+    Vector3f base[2];
+    double scale;
+
+private:
+    Vector2f getTexCoord(const Vector3f &p)
+    {
+        double u = Vector3f::dot(p, base[0]) / scale;
+        u -= floor(u);
+        double v = Vector3f::dot(p, base[1]) / scale;
+        v -= floor(v);
+        return {u, v};
+    }
 };
 
 #endif //PLANE_H

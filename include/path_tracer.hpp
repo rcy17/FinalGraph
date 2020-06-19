@@ -8,14 +8,13 @@ class PathTracer : public Tracer
 public:
     PathTracer() = delete;
 
-    PathTracer(SceneParser *scene, int max_bounces, bool shadow,
-               bool refract) : Tracer(scene, max_bounces, shadow, refract)
+    PathTracer(SceneParser *scene, int max_bounces) : Tracer(scene, max_bounces, true, true)
     {
     }
 
     ~PathTracer() = default;
 
-    Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, double currentIndex = 1.f, bool debug = false) const
+    Vector3f traceRay(const Ray &ray, double t_min, int bounces, unsigned short *seed, Channel channel = ALL, bool debug = false) const
     {
 
         Hit hit(FLT_MAX, NULL, Vector3f(0, 0, 0));
@@ -79,9 +78,6 @@ public:
     }
 
 private:
-    bool randomStop(Vector3f color)
-    {
-    }
 };
 
 #endif // RAY_TRACER_H

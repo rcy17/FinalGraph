@@ -15,7 +15,8 @@
 #include "vector_utils.hpp"
 #include "ray_tracer.hpp"
 #include "path_tracer.hpp"
-#include "color.hpp"
+#include "channel_tracer.hpp"
+
 using namespace std;
 
 Image render(const ArgParser &parser, SceneParser *scene, int height, int width, int offset, int y_range)
@@ -30,7 +31,10 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
         tracer = new RayTracer(scene, parser.bounces, parser.shadows, parser.refractions);
         break;
     case PT:
-        tracer = new PathTracer(scene, parser.bounces, parser.shadows, parser.refractions);
+        tracer = new PathTracer(scene, parser.bounces);
+        break;
+    case CT:
+        tracer = new ChannelTracer(scene, parser.bounces);
         break;
     }
 
@@ -56,11 +60,19 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
 
             for (int i = 0; i < parser.spp; i++)
             {
-                double r1 = 2 * erand48(seed), dx = r1 < 1 ? sqrt(r1) : 2 - sqrt(2 - r1);
-                double r2 = 2 * erand48(seed), dy = r2 < 1 ? sqrt(r2) : 2 - sqrt(2 - r2);
-                Vector2f position(parser.jitter ? x - 0.5 + dx : x, parser.jitter ? _y - 0.5 + dy : _y);
-                Ray camRay = camera->generateRay(position);
-                color += tracer->traceRay(camRay, t_min, 0, seed, 1.f, debug);
+                if (parser.jitter)
+                {
+                    auto dx = erand48(seed);
+                    auto dy = erand48(seed);
+                    double distance;
+                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, _y - 0.5 + dy));
+                    color += tracer->traceRay(camRay, t_min, 0, seed, ALL, debug);
+                }
+                else
+                {
+                    Ray camRay = camera->generateRay(Vector2f(x, _y));
+                    color += tracer->traceRay(camRay, t_min, 0, seed, ALL, debug);
+                }
             }
             image.SetPixel(x, _y, VectorUtils::clamp(color / parser.spp));
         }
