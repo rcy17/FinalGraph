@@ -8,13 +8,11 @@
 #include <tuple>
 #include <cassert>
 
-#ifndef EPS
-#define EPS 1e-3
-#endif
-
 #define sqr(a) ((a) * (a))
 #define fmax(a, b) ((a) > (b) ? (a) : (b))
 #define fmin(a, b) ((a) < (b) ? (a) : (b))
+
+static const double eps = 1e-7;
 
 class BezierCurve2D
 {
@@ -45,7 +43,7 @@ public:
         }
         dx = new double[n];
         dy = new double[n];
-        assert(std::fabs(py[0]) <= EPS);
+        assert(std::fabs(py[0]) <= eps);
         --n;
         // preproces
         for (int i = 0; i <= n; ++i)
@@ -83,10 +81,10 @@ public:
             }
             if (max < data[cnt].width)
                 max = data[cnt].width;
-            data[cnt].width += EPS;
+            data[cnt].width += eps;
             data[cnt].width2 = sqr(data[cnt].width);
         }
-        max += EPS;
+        max += eps;
         max2 = max * max;
         height = getValue(1).y();
         delete[] px;
@@ -153,7 +151,7 @@ private:
             else if (t > 1)
                 t = 1;
             ft = curve->getValue(t).y() - yc, dft = curve->getTangent(t).y();
-            if (std::fabs(ft) < EPS)
+            if (std::fabs(ft) < eps)
                 return t;
             t -= ft / dft;
         }
@@ -185,7 +183,7 @@ private:
             return -1;
         else
             d = sqrt(d);
-        double t = b - d > EPS ? b - d : b + d > EPS ? b + d : -1;
+        double t = b - d > eps ? b - d : b + d > eps ? b + d : -1;
         if (t < 0)
             return -1;
         return t / ray.getDirectionLength();
@@ -215,7 +213,7 @@ private:
 		牛顿迭代法求零点
 	*/
     double newton(double t, double a, double b, double c,
-                  double low = EPS, double upp = 1 - EPS) const
+                  double low = eps, double upp = 1 - eps) const
     {
         // solve sqrt(a(y(t)+pivot.y-b)^2+c)=x(t)
         // f(t) = x(t) - sqrt(a(y(t)+pivot.y-b)^2+c)
@@ -235,7 +233,7 @@ private:
             sq = sqrt(a * sqr(y - b) + c);
             ft = x - sq;
             dft = dx - a * (y - b) * dy / sq;
-            if (std::fabs(ft) < EPS)
+            if (std::fabs(ft) < eps)
                 return t;
             t -= ft / dft * 0.9; // 如果这里不乘衰减因子，则数值不稳定容易震荡
         }
@@ -254,7 +252,7 @@ private:
         Vector3f radius = (o - oo).normalized();
         Vector3f d = r.getDirection();
         Vector3f dd = Vector3f(d.x(), 0, d.z()).normalized();
-        if (Vector3f::dot(radius, dd) > EPS)
+        if (Vector3f::dot(radius, dd) > eps)
             return 1;
         return 0;
     }
@@ -290,13 +288,13 @@ public:
     bool intersect(const Ray &ray, Hit &h, double tmin) const override
     {
         double final_dis = FLT_MAX;
-        // check for |dy|<EPS
-        if (std::fabs(ray.getDirection().y()) < EPS)
+        // check for |dy|<eps
+        if (std::fabs(ray.getDirection().y()) < eps)
         {
             // return false;
             double dis_to_axis = (Vector3f(pivot.x(), ray.getOrigin().y(), pivot.z()) - ray.getOrigin()).length();
             double hit = ray.pointAtParameter(dis_to_axis).y();
-            if (hit < pivot.y() + EPS || hit > pivot.y() + curve->height - EPS)
+            if (hit < pivot.y() + eps || hit > pivot.y() + curve->height - eps)
                 return false;
             // solve function pivot.y+y(t)=ray.o.y to get x(t)
             double t = solve_t(hit - pivot.y());
@@ -304,7 +302,7 @@ public:
                 return false;
             Vector2f loc = curve->getValue(t);
             double ft = pivot.y() + loc.y() - hit;
-            if (std::fabs(ft) > EPS)
+            if (std::fabs(ft) > eps)
                 return false;
             // assume sphere (pivot.x, pivot.y + loc.y, pivot.z) - loc.x
             final_dis = get_sphere_intersect(ray, Vector3f(pivot.x(), pivot.y() + loc.y(), pivot.z()), loc.x());
@@ -316,7 +314,7 @@ public:
 
             // second iteration, more accuracy
             hit = inter_p.y();
-            if (hit < pivot.y() + EPS || hit > pivot.y() + curve->height - EPS)
+            if (hit < pivot.y() + eps || hit > pivot.y() + curve->height - eps)
                 return false;
             // solve function pivot.y+y(t)=ray.o.y to get x(t)
             t = solve_t(hit - pivot.y());
@@ -324,7 +322,7 @@ public:
                 return false;
             loc = curve->getValue(t);
             ft = pivot.y() + loc.y() - hit;
-            if (std::fabs(ft) > EPS)
+            if (std::fabs(ft) > eps)
                 return false;
             // assume sphere (pivot.x, pivot.y + loc.y, pivot.z) - loc.x
             final_dis = get_sphere_intersect(ray, Vector3f(pivot.x(), pivot.y() + loc.y(), pivot.z()), loc.x());

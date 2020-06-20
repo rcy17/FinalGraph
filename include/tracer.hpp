@@ -9,7 +9,7 @@
 #include "vector_utils.hpp"
 
 #ifndef EPSILON
-#define EPSILON 0.00001f
+#define EPSILON 1e-5
 #endif
 
 class SceneParser;
