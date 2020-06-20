@@ -369,7 +369,8 @@ void Image::Merge(std::list<const char *> filenames)
     int h = 0;
     for (auto filename : filenames)
     {
-        auto image = LoadTGA(filename);
+        auto len = strlen(filename);
+        auto image = strcmp(filename + len - 4, ".tga") ? LoadRaw(filename) : LoadTGA(filename);
         assert(image->height <= height - h && image->width == width && "Size error!\n");
         memcpy(data + h * width, image->data, image->height * image->width * sizeof(data[0]));
         h += image->height;

@@ -64,12 +64,12 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
                 {
                     auto dx = erand48(seed);
                     auto dy = erand48(seed);
-                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, _y - 0.5 + dy), seed);
+                    Ray camRay = camera->generateRay(Vector2f(x - 0.5 + dx, y - 0.5 + dy), seed);
                     color += tracer->traceRay(camRay, t_min, 0, seed, ALL, debug);
                 }
                 else
                 {
-                    Ray camRay = camera->generateRay(Vector2f(x, _y), seed);
+                    Ray camRay = camera->generateRay(Vector2f(x, y), seed);
                     color += tracer->traceRay(camRay, t_min, 0, seed, ALL, debug);
                 }
             }
@@ -83,7 +83,7 @@ Image render(const ArgParser &parser, SceneParser *scene, int height, int width,
 
 Image merge(const ArgParser &parser)
 {
-    Image image(parser.width, parser.height);
+    Image image(parser.width * (1 + 2 * parser.filter), parser.height * (1 + 2 * parser.filter));
     image.Merge(parser.segments);
     return image;
 }
