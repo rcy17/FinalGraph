@@ -12,7 +12,7 @@
 #define fmax(a, b) ((a) > (b) ? (a) : (b))
 #define fmin(a, b) ((a) < (b) ? (a) : (b))
 
-static const double eps = 1e-7;
+static const double eps = 5e-5;
 
 class BezierCurve2D
 {

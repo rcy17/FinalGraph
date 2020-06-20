@@ -41,7 +41,7 @@ public:
         {
             Vector2f texCoord = hit.texCoord;
             Vector3f texColor = t(texCoord[0], texCoord[1]);
-            kd = texColor;
+            kd = texColor* diffuseColor;
         }
         else
         {
@@ -84,7 +84,7 @@ public:
         {
             Vector2f texCoord = hit.texCoord;
             Vector3f texColor = t(texCoord[0], texCoord[1]);
-            return texColor;
+            return texColor * diffuseColor;
         }
         if (noise.valid())
             return noise.getColor(p);
