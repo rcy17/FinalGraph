@@ -119,6 +119,33 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material), hasNo
         else if (tok == fTok)
         {
             Trig trig;
+
+            // for most model in hand, it's just like
+            // f1/vt1/vn1 f2/vt2/vn2 f3/vt3/vn3 (may be without vt or vn)
+            // but some models like:
+            // f1/vt1/vn1 f2/vt2/vn2 f3/vt3/vn3 f4/vt4/vn4
+            // so here just consider a sepcial case
+            if (std::count(line.begin(), line.end(), slash) == 8)
+            {
+
+                hasNormal = true;
+                std::replace(line.begin(), line.end(), slash, space);
+                std::stringstream data(line);
+                data >> tok;
+                for (int ii = 0; ii < 3; ii++)
+                {
+                    data >> trig[ii] >> trig.texID[ii] >> trig.nID[ii];
+                    trig[ii]--;
+                    trig.texID[ii]--;
+                    trig.nID[ii]--;
+                }
+                t.push_back(trig);
+                std::swap(trig[2], trig[1]), std::swap(trig.texID[2], trig.texID[1]), std::swap(trig.nID[2], trig.nID[1]);
+                data >> trig[2] >> trig.texID[2] >> trig.nID[2];
+                trig[2]--, trig.texID[2]--, trig.nID[2]--;
+                t.push_back(trig);
+                continue;
+            }
             for (int ii = 0; ii < 3; ii++)
             {
                 std::string tem;
