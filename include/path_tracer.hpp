@@ -36,7 +36,7 @@ public:
         double possibility = std::max(std::max(color[0], color[1]), color[2]);
         if (bounces >= max_bounces)
         {
-            if (bounces > 1000 || erand48(seed) < possibility)
+            if (bounces < 1000 && erand48(seed) < possibility)
                 color = color / possibility;
             else
                 return scene->getBackgroundColor();
