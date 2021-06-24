@@ -218,6 +218,7 @@ int new_node(double txm, int x, double tym, int y, double tzm, int z)
 bool IntersectRecorder::operator()(int idx)
 {
 	result |= m->intersectTrig(idx, ray, hit, t_min);
+	return result;
 }
 
 void Octree::proc_subtree(double tx0, double ty0, double tz0, double tx1, double ty1, double tz1,
